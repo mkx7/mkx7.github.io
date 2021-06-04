@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
   <title>mkx7&#39;blog</title>
   
-  
+  <subtitle>你可曾与魔鬼在月光下共舞?</subtitle>
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
