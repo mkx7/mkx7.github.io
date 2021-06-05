@@ -8,15 +8,15 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>IO_FILE | mkx7&#39;blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="IO_FILE笔记一篇关于IO_FILE学习的笔记，因为作者这部分刚看所以记录的知识比较肤浅，大部分是作者自己的推测和理解，如果哪里错了请大佬看到轻喷。   IO_FILE结构当Linux系统上的程序运行时会使用fopen函数创建FILE结构将其分配在堆中对文件进行处理，FILE是Linux系统标准IO库中专门用于描述文件结构的文件流，它是结构体会记录与文件操作有关的相关变量，每个要处理的文件本质">
+  <meta name="description" content="IO_FILE笔记一篇关于IO_FILE学习的笔记，因为作者这部分刚看所以记录的知识比较肤浅，大部分是作者自己的推测和理解，如果哪里错了请大佬看到轻喷。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IO_FILE">
 <meta property="og:url" content="http://example.com/2021/06/05/IO-FILE/index.html">
 <meta property="og:site_name" content="mkx7&#39;blog">
-<meta property="og:description" content="IO_FILE笔记一篇关于IO_FILE学习的笔记，因为作者这部分刚看所以记录的知识比较肤浅，大部分是作者自己的推测和理解，如果哪里错了请大佬看到轻喷。   IO_FILE结构当Linux系统上的程序运行时会使用fopen函数创建FILE结构将其分配在堆中对文件进行处理，FILE是Linux系统标准IO库中专门用于描述文件结构的文件流，它是结构体会记录与文件操作有关的相关变量，每个要处理的文件本质">
+<meta property="og:description" content="IO_FILE笔记一篇关于IO_FILE学习的笔记，因为作者这部分刚看所以记录的知识比较肤浅，大部分是作者自己的推测和理解，如果哪里错了请大佬看到轻喷。">
 <meta property="og:locale">
 <meta property="article:published_time" content="2021-06-05T06:38:20.000Z">
-<meta property="article:modified_time" content="2021-06-05T07:54:21.161Z">
+<meta property="article:modified_time" content="2021-06-05T09:16:51.960Z">
 <meta property="article:author" content="mkx7">
 <meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
@@ -107,8 +107,6 @@
     			<a q-on="click: openSlider(e, 'innerArchive')" href="javascript:void(0)">所有文章</a>
     			
             
-    			
-    			<a q-on="click: openSlider(e, 'friends')" href="javascript:void(0)">false</a>
     			
             
     			
@@ -209,7 +207,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h1 id="IO-FILE笔记"><a href="#IO-FILE笔记" class="headerlink" title="IO_FILE笔记"></a>IO_FILE笔记</h1><p>一篇关于IO_FILE学习的笔记，因为作者这部分刚看所以记录的知识比较肤浅，大部分是作者自己的推测和理解，如果哪里错了请大佬看到轻喷。</p>
-<!--显示更多-->
+<span id="more"></span>
 
 <h2 id="IO-FILE结构"><a href="#IO-FILE结构" class="headerlink" title="IO_FILE结构"></a>IO_FILE结构</h2><p>当Linux系统上的程序运行时会使用fopen函数创建FILE结构将其分配在堆中对文件进行处理，FILE是Linux系统标准IO库中专门用于描述文件结构的文件流，它是结构体会记录与文件操作有关的相关变量，每个要处理的文件本质上就是一个FILE，有3个文件流是程序启动时就自动准备好的，分别是stdin、stdout、stderr，此外所有FILE文件流又通过_chain链接成一条链表，表头通过_IO_list_all(libc全局变量，在符号表中可通过pwntools找到)指向(一般它指向IO_2_1_stderr)，通过_IO_list_all就可以控制所有的FILE文件流，这里可以看一张大佬的图片方便理解：</p>
 <p>![image-20210527174147620](D:\web page\blog\themes\yilia\source\assets\img\image1.png)</p>
@@ -452,8 +450,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
       
     
       
-      
-      
     
       
       
@@ -465,15 +461,13 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     
     
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
+      <li style="width: 50%" q-on="click: openSlider(e, 'innerArchive')"><a href="javascript:void(0)" q-class="active:innerArchive">所有文章</a></li>
       
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'friends')"><a href="javascript:void(0)" q-class="active:friends">false</a></li>
-      
         
       
-      <li style="width: 33.333333333333336%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
+      <li style="width: 50%" q-on="click: openSlider(e, 'aboutme')"><a href="javascript:void(0)" q-class="active:aboutme">关于我</a></li>
       
         
     </ul>
@@ -540,38 +534,6 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
     	</section>
     
 
-    
-    	<section class="tools-section tools-section-friends" q-show="friends">
-  		
-        <ul class="search-ul">
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接1</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接2</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接3</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接4</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接5</a>
-            </li>
-          
-            <li class="search-li">
-              <a href="http://localhost:4000/" target="_blank" class="search-title"><i class="icon-quo-left icon"></i>友情链接6</a>
-            </li>
-          
-        </ul>
-  		
-    	</section>
     
 
     
