@@ -8,12 +8,12 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>栈溢出类漏洞前置基础知识 | mkx7&#39;blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="溢出类漏洞基础前置知识：计算机系统中各段：早期的计算机中程序都是直接运行在物理内存上的，运行时访问的地址都是物理地址，这要求程序使用的内存空间不超过物理内存的大小。现代计算机操作系统中为了提高CPU的利用率计算机同时运行多个程序，并将计算机上有限的物理内存分配给多个程序使用，做到隔离各个程序的地址空间和提高内存利用率，操作系统应用虚拟内存机制来管理内存。简单来说现代计算机如果要运行一个程序">
+  <meta name="description" content="栈溢出类漏洞前置基础知识。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="栈溢出类漏洞前置基础知识">
 <meta property="og:url" content="http://example.com/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/index.html">
 <meta property="og:site_name" content="mkx7&#39;blog">
-<meta property="og:description" content="溢出类漏洞基础前置知识：计算机系统中各段：早期的计算机中程序都是直接运行在物理内存上的，运行时访问的地址都是物理地址，这要求程序使用的内存空间不超过物理内存的大小。现代计算机操作系统中为了提高CPU的利用率计算机同时运行多个程序，并将计算机上有限的物理内存分配给多个程序使用，做到隔离各个程序的地址空间和提高内存利用率，操作系统应用虚拟内存机制来管理内存。简单来说现代计算机如果要运行一个程序">
+<meta property="og:description" content="栈溢出类漏洞前置基础知识。">
 <meta property="og:locale">
 <meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213132407552.png">
 <meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213133003287.png">
@@ -22,7 +22,7 @@
 <meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213171405028.png">
 <meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213173313928.png">
 <meta property="article:published_time" content="2021-06-05T12:44:03.000Z">
-<meta property="article:modified_time" content="2021-06-05T12:44:30.846Z">
+<meta property="article:modified_time" content="2021-06-05T12:48:49.200Z">
 <meta property="article:author" content="mkx7">
 <meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
@@ -208,14 +208,13 @@
         
       </header>
       <div align="center" class="post-count">
-          字数：4,862字 | 预计阅读时长：17分钟
+          字数：4,874字 | 预计阅读时长：17分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <span id="more"></span>
-
-
+        <p>栈溢出类漏洞前置基础知识。</p>
+<span id="more"></span>
 
 <h1 id="溢出类漏洞基础前置知识："><a href="#溢出类漏洞基础前置知识：" class="headerlink" title="溢出类漏洞基础前置知识："></a>溢出类漏洞基础前置知识：</h1><h2 id="计算机系统中各段："><a href="#计算机系统中各段：" class="headerlink" title="计算机系统中各段："></a>计算机系统中各段：</h2><p>早期的计算机中程序都是直接运行在物理内存上的，运行时访问的地址都是物理地址，这要求程序使用的内存空间不超过物理内存的大小。现代计算机操作系统中为了提高CPU的利用率计算机同时运行多个程序，并将计算机上有限的物理内存分配给多个程序使用，做到隔离各个程序的地址空间和提高内存利用率，操作系统应用虚拟内存机制来管理内存。简单来说现代计算机如果要运行一个程序，程序需要在虚拟内存中加载运行，这一部分简单介绍操作系统的虚拟内存空间中的各段布局和作用。要详细理解虚拟内存可参考《深入理解计算机系统》、《程序员的自我修养-链接装载库》、linux的虚拟内存可参考《linux二进制分析》。</p>
 <p>计算机系统虚拟内存中各段布局简略图：堆空间和数据段之间还有一个bss段以及其他部分，此图为简略图。</p>
@@ -539,11 +538,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">笔记</a>
+                <a href="javascript:void(0)" class="js-tag color3">漏洞</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">漏洞</a>
+                <a href="javascript:void(0)" class="js-tag color3">笔记</a>
               </li>
              
               <li class="article-tag-list-item">
