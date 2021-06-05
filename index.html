@@ -74,10 +74,10 @@
         	    
 
 		<nav>
-    			总文章数 7
+    			总文章数 9
 		</nav>
 		<nav>
-			总字数 <span class="post-count">21.1k</span>
+			总字数 <span class="post-count">27.5k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -172,6 +172,273 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-栈溢出类漏洞前置基础知识" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">栈溢出类漏洞前置基础知识</a>
+    </h1>
+  
+
+        
+        
+<a href="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="archive-article-date">
+  	<time datetime="2021-06-05T12:44:03.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
+</a>
+
+        
+      </header>
+      <div align="center" class="post-count">
+          字数：4,862字 | 预计阅读时长：17分钟
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+
+
+<h1 id="溢出类漏洞基础前置知识："><a href="#溢出类漏洞基础前置知识：" class="headerlink" title="溢出类漏洞基础前置知识："></a>溢出类漏洞基础前置知识：</h1><h2 id="计算机系统中各段："><a href="#计算机系统中各段：" class="headerlink" title="计算机系统中各段："></a>计算机系统中各段：</h2><p>早期的计算机中程序都是直接运行在物理内存上的，运行时访问的地址都是物理地址，这要求程序使用的内存空间不超过物理内存的大小。现代计算机操作系统中为了提高CPU的利用率计算机同时运行多个程序，并将计算机上有限的物理内存分配给多个程序使用，做到隔离各个程序的地址空间和提高内存利用率，操作系统应用虚拟内存机制来管理内存。简单来说现代计算机如果要运行一个程序，程序需要在虚拟内存中加载运行，这一部分简单介绍操作系统的虚拟内存空间中的各段布局和作用。要详细理解虚拟内存可参考《深入理解计算机系统》、《程序员的自我修养-链接装载库》、linux的虚拟内存可参考《linux二进制分析》。</p>
+<p>计算机系统虚拟内存中各段布局简略图：堆空间和数据段之间还有一个bss段以及其他部分，此图为简略图。</p>
+<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213132407552.png" alt="image-20210213132407552"></p>
+<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213133003287.png" alt="image-20210213133003287"></p>
+<p>关于虚拟内存这一块细讲东西太多，这里只记录与溢出有关的bss段、data段、text段、heap段、stack段的基本介绍：</p>
+<h3 id="bss段："><a href="#bss段：" class="headerlink" title="bss段："></a>bss段：</h3><p>bss段通常是指用来存放程序中未初始化的全局变量的一块内存区域，也存放初始化但数据为0的全局变量，是英文Block Started by Symbol的简称。bss段属于静态内存分配。 </p>
+<h3 id="data段："><a href="#data段：" class="headerlink" title="data段："></a>data段：</h3><p>data段通常是指用来存放程序中已初始化的全局变量的一块内存区域。属于静态内存分配。 </p>
+<h3 id="text段："><a href="#text段：" class="headerlink" title="text段："></a>text段：</h3><p>代码段通常是指用来存放程序执行代码的一块内存区域。这部分区域的大小在程序运行前就已经确定，并且内存区域通常属于只读(某些架构也允许代码段为可写，即允许修改程序)。代码段中也有可能包含一些只读的常数变量，如字符串常量等。 </p>
+<h3 id="heap段："><a href="#heap段：" class="headerlink" title="heap段："></a>heap段：</h3><p>堆是用于存放进程运行中被动态分配的内存段，它的大小并不固定，可动态扩张或缩减。当进程调用malloc等函数分配内存时，新分配的内存就被动态添加到堆上（堆被扩张）；当利用free等函数释放内存时，被释放的内存从堆中被剔除（堆被缩减）。</p>
+<h3 id="stack段："><a href="#stack段：" class="headerlink" title="stack段："></a>stack段：</h3><p>栈又称堆栈，是用户存放程序临时创建的局部变量，也就是说我们函数括弧“{}”中定义的变量（但不包括static声明的变量，static意味着在数据段中存放变量）。此外函数被调用时，其参数也会被压入发起调用的进程栈中，并且待到调用结束后，函数的返回值也会被存放回栈中。由于栈的先进先出(FIFO)特点，所以栈特别方便用来保存/恢复调用现场。我们可以把堆栈看成一个寄存、交换临时数据的内存区。 </p>
+<hr>
+<p><strong>一个程序本质上都是由 bss段、data段、text段三个组成的。</strong></p>
+<p>bss段通常是指用来存放程序中未初始化的全局变量的一块内存区域，一般在初始化时bss 段部分将会清零。bss段属于静态内存分配，即程序一开始就将其清零了。如在C语言之类的程序编译完成之后，已初始化的全局变量保存在.data 段中，未初始化的全局变量保存在.bss 段中。text和data段都在可执行文件中（在嵌入式系统里一般是固化在镜像文件中），由系统从可执行文件中加载；而bss段不在可执行文件中，由系统初始化。</p>
+<p>bss段和data段的区别主要在于：</p>
+<p>全局的未初始化变量存在于bss段中，具体体现为一个占位符，并不给该段的数据分配空间，只是记录数据所需空间的大小，全局的已初始化变量存于data段中，而函数内的自动变量都在栈上分配空间。</p>
+<p>bss段不占用文件空间，其内容由操作系统初始化，data段需要占用文件空间，其内容由程序初始化。</p>
+<p>bss段的大小从可执行文件中得到 ，然后链接器得到这个大小的内存块，紧跟在数据段后面，data段则为数据分配空间，数据保存在目标文件中，data段包含经过初始化的全局变量以及它们的值。当这个内存区进入程序的地址空间后全部清零。</p>
+<p>包含rodata段、data段和bss段等的整个区段才是完整的数据区。</p>
+<h2 id="函数调用及函数栈帧："><a href="#函数调用及函数栈帧：" class="headerlink" title="函数调用及函数栈帧："></a>函数调用及函数栈帧：</h2><h3 id="栈作用"><a href="#栈作用" class="headerlink" title="栈作用:"></a>栈作用:</h3><p>x86和x64计算机系统保存函数的参数、返回值、返回地址等都会用到栈，函数调用过程中通过将数据、地址压入和弹出栈来进行函数调用。</p>
+<h3 id="栈结构："><a href="#栈结构：" class="headerlink" title="栈结构："></a>栈结构：</h3><p>栈是一种LIFO(先进后出)的数据结构，从高地址到低地址存储数据，支持push将数据压入栈和pop将栈中的数据弹出栈储存到寄存器或内存中两种操作，正好满足函数调用时父函数调用子函数，父函数在前子函数在后的要求。调用时父函数通过栈将参数传入子函数，子函数完成运算后通过栈返回返回值。</p>
+<p>栈中包括栈帧，在调用一个函数时会建立一个新的栈帧，每个栈帧的建立和使用后处理的方式取决于操作系统和编译器。可以看做单一的栈帧对应函数调用时某个单一函数，而栈段不止用于单一的某个程序而是计算机系统中所以程序的共用部分，在研究栈溢出中我们一般通过某个栈帧来使用栈溢出。</p>
+<h4 id="栈帧："><a href="#栈帧：" class="headerlink" title="栈帧："></a>栈帧：</h4><p>栈帧，也就是stack frame，是一种栈结构也是stack段的一部分，栈帧专门用于保存函数调用过程中的各种信息(参数，返回地址，本地变量等)。栈帧有栈顶和栈底之分，其中栈顶的地址最低，栈底的地址最高，SP(栈指针)一直指向栈顶的。BP(帧指针)也就是基址指针一直指向栈底。EP和BP一起创建和使用一个栈帧。</p>
+<p>栈帧结构图：</p>
+<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213093352964.png" alt="image-20210213093352964"></p>
+<p>如上，栈顶在上，地址空间从上向下生长。ESP相当于栈顶，EBP相当于栈底，如果被调用函数可以使用EAX、EBX等寄存器，而调用函数中这些寄存器的值此时还没有使用完，则栈此时还要保存EAX、EBX等寄存器的值。</p>
+<h3 id="参数传递："><a href="#参数传递：" class="headerlink" title="参数传递："></a>参数传递：</h3><h4 id="系统函数（内核接口）："><a href="#系统函数（内核接口）：" class="headerlink" title="系统函数（内核接口）："></a>系统函数（内核接口）：</h4><h5 id="1、x86架构32位系统调用："><a href="#1、x86架构32位系统调用：" class="headerlink" title="1、x86架构32位系统调用："></a>1、x86架构32位系统调用：</h5><p>使用寄存器传递参数，eax为syscall_number(系统函数编号)，ebx、ecx、edx、edi、esi、ebp用于将6个参数传递给系统调用。返回值保存在eax中。</p>
+<h5 id="2、x86架构64位系统调用"><a href="#2、x86架构64位系统调用" class="headerlink" title="2、x86架构64位系统调用"></a>2、x86架构64位系统调用</h5><p>使用寄存器传递参数，不直接从栈中传递任何参数，eax仍为syscall_number，使用的寄存器有rdi、rsi、rdx、r10、r8、r9.系统调用通过syscall指令完成。返回值，系统调用的结果存放在eax中。</p>
+<h4 id="用户函数"><a href="#用户函数" class="headerlink" title="用户函数"></a>用户函数</h4><h5 id="1、x86架构32位函数调用"><a href="#1、x86架构32位函数调用" class="headerlink" title="1、x86架构32位函数调用"></a>1、x86架构32位函数调用</h5><p>使用栈传递参数，由于参数的数量不定，参数不再通过寄存器传递，最后一个参数第一个被压入栈中，直到所有参数都被压入栈中，然后执行call指令调用函数。</p>
+<h5 id="2、x86架构64位系统调用-1"><a href="#2、x86架构64位系统调用-1" class="headerlink" title="2、x86架构64位系统调用"></a>2、x86架构64位系统调用</h5><p>寄存器与栈结合传递参数，因为内存的读写速度是有限制的，所以使用寄存器与栈结合的形式进行参数的传递工作，如果参数的类型是MEMORY，则在栈上传递参数，如果类型是INTEGER，则顺序使用rdi、rsi、rdx、rcx、r8和r9寄存器传参，如果参数多于6个，则后续参数使用栈传递，这样保障了函数的高效运行。</p>
+<h3 id="函数调用-栈帧使用-过程："><a href="#函数调用-栈帧使用-过程：" class="headerlink" title="函数调用(栈帧使用)过程："></a>函数调用(栈帧使用)过程：</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">int MyFunction(int x, int y, int z)</span><br><span class="line">&#123;</span><br><span class="line">    int a, b, c;</span><br><span class="line">    a = 10;</span><br><span class="line">    b = 5;</span><br><span class="line">    c = 2;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br><span class="line">int TestFunction()</span><br><span class="line">&#123;</span><br><span class="line">    int x = 1, y = 2, z = 3;</span><br><span class="line">    MyFunction1(1, 2, 3);</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如上函数，当TestFunction函数调用MyFunction函数时，MyFunction函数汇编代码大致如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">_MyFunction:</span><br><span class="line">    push %ebp            ; //保存%ebp的值</span><br><span class="line">    movl %ebp, $esp      ; //将%esp的值赋给%ebp，使新的%ebp指向栈顶</span><br><span class="line">    movl -12(%esp), %esp ; //分配额外空间给本地变量</span><br><span class="line">    movl $10, -4(%ebp)   ; </span><br><span class="line">    movl $5,  -8(%ebp)   ; </span><br><span class="line">    movl $2,  -12(%ebp)  ;</span><br></pre></td></tr></table></figure>
+
+<p>这里MyFunction函数做被调用函数，TestFunction函数做调用函数，调用者首先将被调用函数的参数按照从右到左的顺序压入栈中(也不一定，如何具体使用栈上面可参考各架构的位数，这里假设只使用栈)。然后将返回地址压入栈中。这两件事一定都是调用函数负责的，压入的栈应该属于调用函数的栈帧。被调用函数也做了两件事情：首先将之前的(调用函数的) ebp压入栈，此时 esp指向它。然后将%esp的值赋给ebp, ebp就有了新的值(便于后面重新创建一个新的栈帧)，它也指向存放旧ebp的栈空间。这时它成了MyFunction函数的栈帧的栈底。这样，就保存了调用函数的ebp，并且建立了一个新的栈帧。</p>
+<p>在ebp更新后，先分配一块0x12字节的空间用于存放本地变量，这步一般都是用sub或者mov指令实现。在这里使用的是movl。通过使用mov配合-4(%ebp), -8(%ebp)和-12(%ebp)就可以给 a、b和c 赋值了。</p>
+<p>当上面栈中的参数使用完后被调用函数会返回返回值并返回调用函数的栈帧中，这时MyFunction函数的汇编代码大致为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">MyFunction:</span><br><span class="line">    push %ebp</span><br><span class="line">    movl %esp, %ebp</span><br><span class="line">    movl -12(%esp), %esp</span><br><span class="line">    ...</span><br><span class="line">    mov %ebp, %esp</span><br><span class="line">    pop %ebp</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+
+<p>上述汇编代码在完成参数调用后esp移到ebp处，ebp寄存器返回到旧的ebp寄存器处恢复到调用函数的栈帧状态。ret指令相当于pop+jump。ret首先将数据(返回地址ip寄存器保存)弹出栈并保存到eip中，然后处理器根据这个地址无条件地跳到相应位置获取新的指令。此时就通过栈帧完成了一个函数的调用。</p>
+<h3 id="函数调用约定："><a href="#函数调用约定：" class="headerlink" title="函数调用约定："></a>函数调用约定：</h3><p>在调用函数的过程中有9步：</p>
+<p>1、调用要使用的函数，现在把调用者的地址入栈（函数返回时可继续往下执行）</p>
+<p>2、把函数的参数压栈或者存储到寄存器中</p>
+<p>3、调转到函数</p>
+<p>4、把函数使用到的一些寄存器压栈</p>
+<p>5、执行函数</p>
+<p>6、处理函数返回值</p>
+<p>7、对于第3步中的压栈的那些寄存器，恢复他们原来的值</p>
+<p>8、清空第1步中的压栈参数和处理返回值</p>
+<p>9、返回到调用者调用时的地址（步骤1已经记录）继续往下执行</p>
+<p>函数调用约定主要定义步骤1和步骤7的规则，如何传递参数和函数调用结束后谁负责栈上数据的处理。</p>
+<p>函数调用完成后栈中的数据并没有清空但是用户失去了访问权限，而调用结束后栈的处理方式取决于函数调用约定，函数调用约定的三个主要作用为：</p>
+<p>1、函数参数传递的方式（是否采用寄存器传递参数、采用哪个寄存器传递参数、参数压桟的顺序等）。</p>
+<p>2、函数调用结束后的栈指针由谁恢复（被调用的函数恢复还是调用者恢复）。</p>
+<p>3、函数修饰名的产生方法。</p>
+<p>常见的三种函数调用约定是cdecl，stdcall，fastcall。应用最广泛的调用方式是cdecl和stdcall。此外不常见的函数调用约定还有Pascal、thiscall等。</p>
+<h4 id="cdecl："><a href="#cdecl：" class="headerlink" title="cdecl："></a>cdecl：</h4><p>cdecl是C/C++默认方式，采用栈传递参数，参数从从右向左入栈，由调用函数负责恢复栈顶指针，编译器在编译时会在函数名前加上一个下划线前缀生成修饰名，格式为function。如函数int Add(int a, int b)的修饰名是_Add。修饰名作用于程序链接时。在调用参数个数可变时只能采用cdecl方式，如printf函数。</p>
+<h4 id="stdcall："><a href="#stdcall：" class="headerlink" title="stdcall："></a>stdcall：</h4><p>stdcall是Windows API默认方式，也是C++的标准调用方式，同样采用栈传递参数，参数从右向左入栈，被调用函数负责恢复栈顶指针，在输出函数名前加上一个下划线前缀，后面加上一个“@”符号和其参数的字节数，格式为function@number。如函数int Add(int a, int b)的修饰名是_Add@8。stdcall与_cdecl最主要的区别是由被调用函数清空，实际上就是将对应参数数目的数据从栈中弹出。</p>
+<p>stdcall缺点是不能使用于那些不确定数目的函数，如printf。 优点是节省空间，因为编译出恢复栈顶的代码在函数内部只需要一份，而调用函数恢复的方式还需要在调用处编译出恢复栈顶的代码。</p>
+<h4 id="fastcall："><a href="#fastcall：" class="headerlink" title="fastcall："></a>fastcall：</h4><p>fastcall是快速调用方式，函数的第一个和第二个(从左向右)32字节参数(或者更小的)通过ecx和edx寄存器传递，其他参数通过桟传递。从第三个参数(如果有的话)开始从右向左的顺序压栈，由被调用函数恢复栈顶指针，在函数名之前加上”@”,在函数名后面也加上“@”和参数字节数，例如@function@8。之所以叫做fastcall是因为栈位于内存区域，寄存器位于CPU内，所以存取方式快于内存。</p>
+<h4 id="thiscall："><a href="#thiscall：" class="headerlink" title="thiscall："></a>thiscall：</h4><p>thiscall是唯一一个不能明确指明的函数修饰，因为thiscall只能用于C++类成员函数的调用，同时thiscall也是C++成员函数缺省的调用约定。由于成员函数调用还有一个this指针，因此必须特殊处理。</p>
+<p>采用桟传递参数，参数从右向左入栈。如果参数个数确定，this指针通过ecx传递给被调用者；如果参数个数不确定，this指针在所有参数压栈后被压入堆栈。对参数个数不定的，调用函数清理堆栈，否则由被调函数清理堆栈。</p>
+<h2 id="动态链接plt表和got表："><a href="#动态链接plt表和got表：" class="headerlink" title="动态链接plt表和got表："></a>动态链接plt表和got表：</h2><p>这部分在《程序员的自我修养-链接装载库》中有详细介绍，这里大致介绍下plt表和got表。</p>
+<p>因为操作系统出于效率(和安全等其他方面)考虑不会在程序编译链接时就完成符号表的解析，而是等到程序真正执行前才完成所有符号表的解析，所以会使用动态链接的方法来提高程序运行的效率。在动态链接的情况下，程序加载的时候并不会把链接库中所有函数都一起加载进来，而是程序执行的时候按需加载，如果有函数并没有被调用，那么它就不会在程序生命中被加载进来。这样的设计就能提高程序运行的流畅度，也减少了内存空间。而且现代操作系统不允许修改代码段，只能修改数据段，所以要用到GOT表和PLT表。</p>
+<p>获取数据段存放函数地址的那一小段代码称为PLT(Procedure Linkage Table)过程链接表存放函数地址的数据段称为GOT(Global Offset Table)全局偏移表。</p>
+<p>plt表中的每一项的数据内容都对应的got表中的地址，plt表中的数据根本不是函数的真实地址，而是got表项的地址。在进入带有@plt标志的函数时，这个函数其实就是个过渡作用，因为got表项中的数据才是函数最终的地址，而plt表中的数据又是got表项的地址，我们就可以通过plt表跳转到got表来得到函数真正的地址。</p>
+<p>在一个程序调用函数时，会先跳转到被调用函数的plt表处，如果该函数已经被调用过，则plt表保存的为该函数的真实内存地址，根据真实内存地址即可去调用该函数，而如果该函数未被调用过，如第一次调用scanf函数，则此时跳转流程为call scanf —&gt; scanf的plt表 —&gt;scanf的got表，在got表中能够找到scanf函数的真实内存地址供程序加载运行。</p>
+<p>简单来说可看做：</p>
+<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213144023640.png" alt="image-20210213144023640"></p>
+<p>plt表和got表的对应：</p>
+<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213171405028.png" alt="image-20210213171405028"></p>
+<p>除了plt[0]、got[0]、got[1]、got[2]有特殊作用，作用全部的plt表和got表，plt[0]是一个函数，这个函数的作用是通过got[1]和got[2]来正确绑定一个函数的正式地址到对应的got表中来。剩下的如上图一一对应，被调用的函数存放在除plt[0]外的plt表其他表项中。</p>
+<p>函数详细调用过程：</p>
+<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213173313928.png" alt="image-20210213173313928"></p>
+<p>如图，程序调用puts函数，puts函数在glibc动态库中，编译和链接阶段链接器并不知道puts函数的加载地址也就无法向got表中填入，所以要等到进程真正运行后才能确定puts函数的地址，此时来重定位。首先函数调用还是需要进入plt表中，然后通过plt进入got表中，此时因为puts函数在该程序中还是第一次被调用并没有保存puts函数在内存中的真正地址，所以还需要通过plt表向got表写入puts函数在内存中的真实地址。此时got表中保存的还是plt中的地址(因为还需要plt表向got表中写入puts函数在内存中的真实地址)，通过got表跳转到plt表，将调用函数的id压栈，再跳转到plt表项，此时回到的plt表应该是plt[0]再进入got表，此时进入的got表应该是got[0]、got[1]然后_dl_runtime_resolve对被调用函数进行解析和重定位，最后将被调用函数的真实地址写进got表，执行完被调用函数后返回调用函数。此后再调用puts函数直接进入plt表即可。</p>
+<p>ps：dynamic段：提供动态链接的信息，例如动态链接中各个表的位置。link_map：已加载库的链表，由动态库函数的地址构成的链表。_dl_runtime_resolve：在第一次运行时进行地址解析和重定位。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">pwn</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-搜索学习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/06/05/%E6%90%9C%E7%B4%A2%E5%AD%A6%E4%B9%A0/">搜索学习</a>
+    </h1>
+  
+
+        
+        
+<a href="/2021/06/05/%E6%90%9C%E7%B4%A2%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
+  	<time datetime="2021-06-05T12:41:13.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
+</a>
+
+        
+      </header>
+      <div align="center" class="post-count">
+          字数：1,460字 | 预计阅读时长：5分钟
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+
+
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>之所以会记录这篇文章起初是因为今天不经意看到<a target="_blank" rel="noopener" href="https://evilpan.com/2020/05/31/idcard-internal/">这篇文章</a>，开始只是简单泛读，看到一半中间被作者的搜索思想所影响学习了下(因为有时候对社工感兴趣就需要用到搜索引擎，但笔者其实连日常的学习中百度都用不好，比如我师傅看到CTF中的一道题直接找到了那道题的wp和flag而我还在嘤嘤嘤。。。)，感觉有必要学习下正经的搜索思路而不是社工中那些有关搜索引擎烂大街的使用介绍，于是和上述文章作者一样按照大佬的思路学习下搜索引擎的使用方法(主要是向大佬的思路看齐)。</p>
+<p>OK，闲谈到此为止，下面的目标是能对身份证的芯片有个基本了解就可以了。</p>
+<h2 id="思路"><a href="#思路" class="headerlink" title="思路"></a>思路</h2><p>大佬在他的文章中写到从对一件事情有兴趣到能真正了解那件事的完整过程，中间有3步：</p>
+<p>1、模糊查询</p>
+<p>2、精确搜索</p>
+<p>3、去伪存真</p>
+<p>这部分就用这3个步骤去进行身份证的芯片信息搜索(中间尽量带点和身份证芯片有关的知识不然除了大佬的思想什么都没学到)</p>
+<p>模糊查询：这里我没用百度而是用的谷歌，看一下查询结果：</p>
+<p><img src="../../../../cach/image-20210525171446729.png" alt="image-20210525171446729"></p>
+<p>第3篇文章就是上面大佬写的文章，看着红色框内的信息就挺劲爆，点进去除了画面不怎么样信息真实性也有待确定，但不得不说真的一下找到了问题的点，为什么通过身份证能确定一个人的信息？因为身份证里面的芯片，如果你对这种信息感兴趣基本这里你的问题就结束了，猜一下正常人对这种问题最终要获取的信息基本定位到为什么身份证能记录一个人的信息，只是身份证芯片，但像前面介绍的那样，我们还要继续向下挖(但这是有度的，估计一直向下挖就挖到很多的物理学知识了)，继续去搜索身份证芯片，这次的目标是要了解身份证芯片是如何能保存一个人的信息的，这次步骤过的快一点直接到精确查询，身份证芯片保存信息，这次都是没用的信息，大概是搜索问题没有设置好，先直接搜索身份证芯片保存信息的原理吧：</p>
+<p><img src="../../../../cach/image-20210525172638147.png" alt="image-20210525172638147"></p>
+<p>也没有什么特别有用的信息，起码并没有介绍清楚身份证芯片保存信息的物理知识只是大概介绍了身份证芯片如何保存信息的，但往后翻几页就会得到你要搜索的资料，但在后面知道了这些信息：</p>
+<p>二代身份证识别系统工作原理：</p>
+<p>身份证信息读取器采用国际上先进的TypeB非接触IC卡阅读技术。</p>
+<p>通过内嵌的专用身份证安全控制模块（SAM），以无线传输方式与第二代居民身份证内的专用芯片进行安全认证后，将芯片内的个人信息资料读出，再通过计算机通讯接口，将此信息上传至计算机。安装在计算机中的阅读软件，将这些信息解码成文字和相片进行显示和存储。</p>
+<p>二代身份证识别系统的适用范围：</p>
+<p>1、公安：身份证申领、户口登记迁移、人口管理等。旅馆：住宿登记等。</p>
+<p>2、民政：求学、就业、参军、婚姻登记等。</p>
+<p>3、民航：机票购买、登机等。</p>
+<p>4、银行：开户、信用卡交易、大额取款等。</p>
+<p>5、邮局：领取邮件汇款等。</p>
+<p>6、电信：电话手机开户、各种通信业务等。</p>
+<p>7、证券：股票、期货交易等。</p>
+<p>身份证信息读取器像验钞机一样，能对身份证真伪进行有效识别，二代证内含有RFID芯片，通过二代身份证读卡器，读取身份证芯片内所存储信息，包括姓名，地址，照片等信息将一一显示，二代证芯片采用智能卡技术，是一种能判断身份证是否伪造的设备。</p>
+<p>其芯片无法复制，高度防伪，配合身份身份证信息读取器，假身份证将无处藏身。可读取、查询第二代居民身份证全部信息,可验证第二代居民身份证真伪。</p>
+<p>以上资料来自百度，到了这里按照大佬的思路基本知道了身份证保存个人信息的原理在于芯片内的SAM模块，按照大佬的介绍再去深入理解的话就是针对某个点去深入学习了，也就是再去搜索SAM模块，之后就是再判断下SAM模块有关的具体信息，再去深入搜索更深的点，这个过程中一定会有错误的地方，至于怎么判断错误的地方就要去查看能绝对确定信息是对的东西比如论文，之后重复上述过程直到达到你的目标，emmm，我食言了，到了这我感觉没什么意思了，所以看完大佬的文章就走了，没有记录身份证芯片有关的知识。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>信息搜索大致就是知道一个问题后去对问题进行进一步搜索，排除，搜索，排除，最后获取正确的想知道的信息，突然感觉没啥意思，当随笔记吧。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">笔记</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/06/05/%E6%90%9C%E7%B4%A2%E5%AD%A6%E4%B9%A0/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
     <article id="post-shell部分基础实现原理" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -1086,11 +1353,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">计算机组成</a>
+                <a href="javascript:void(0)" class="js-tag color3">笔记</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">漏洞</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">计算机组成</a>
               </li>
             
             <div class="clearfix"></div>
