@@ -6,15 +6,28 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives | mkx7&#39;blog</title>
+  <title>Linux下aslr与pie | mkx7&#39;blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="mkx7&#39;blog">
-<meta property="og:url" content="http://example.com/archives/index.html">
+  <meta name="description" content="aslraslr(Address space layout randomization)地址空间布局随机化是和pie共同作用以针对缓冲区溢出的一种安全保护技术，作用在程序映射到内存时，通过对加载的虚拟地址进行随机化实现对栈、堆、共享库等线性区的布局随机化，以此避免攻击者定位到确定的函数、gadgets等攻击代码位置达成阻止溢出的目的。 aslr分为3个等级： 0、关闭aslr，无任何作用 1、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux下aslr与pie">
+<meta property="og:url" content="http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/index.html">
 <meta property="og:site_name" content="mkx7&#39;blog">
+<meta property="og:description" content="aslraslr(Address space layout randomization)地址空间布局随机化是和pie共同作用以针对缓冲区溢出的一种安全保护技术，作用在程序映射到内存时，通过对加载的虚拟地址进行随机化实现对栈、堆、共享库等线性区的布局随机化，以此避免攻击者定位到确定的函数、gadgets等攻击代码位置达成阻止溢出的目的。 aslr分为3个等级： 0、关闭aslr，无任何作用 1、">
 <meta property="og:locale">
+<meta property="og:image" content="d:/cach/image-20210603162553526.png">
+<meta property="og:image" content="d:/cach/image-20210603162606021.png">
+<meta property="og:image" content="d:/cach/image-20210603163104032.png">
+<meta property="og:image" content="d:/cach/image-20210603163201647.png">
+<meta property="og:image" content="d:/cach/image-20210603170112481.png">
+<meta property="og:image" content="d:/cach/image-20210603170149284.png">
+<meta property="og:image" content="d:/cach/image-20210603173125093.png">
+<meta property="article:published_time" content="2021-06-05T12:32:15.000Z">
+<meta property="article:modified_time" content="2021-06-05T12:36:39.490Z">
 <meta property="article:author" content="mkx7">
+<meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:/cach/image-20210603162553526.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -171,158 +184,92 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Linux下aslr与pie" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:33:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">shell部分基础实现原理</a>
+    <h1 class="article-title" itemprop="name">
+      Linux下aslr与pie
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">操作系统</a>
-        		</li>
-      		
-		</ul>
-	</div>
+        
+        
+        <!-- 不蒜子统计 -->
+        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
+              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
+        </span>
 
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/%E4%B8%80%E4%BA%9B%E4%B8%8E%E5%87%BD%E6%95%B0%E6%9C%89%E5%85%B3%E7%9A%84%E6%BA%A2%E5%87%BA%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:32:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/%E4%B8%80%E4%BA%9B%E4%B8%8E%E5%87%BD%E6%95%B0%E6%9C%89%E5%85%B3%E7%9A%84%E6%BA%A2%E5%87%BA%E9%97%AE%E9%A2%98/">一些函数溢出问题</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">漏洞</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:32:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/">计算机硬件学习</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机组成</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
 <a href="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/" class="archive-article-date">
   	<time datetime="2021-06-05T12:32:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
 </a>
 
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/">Linux下aslr与pie</a>
-    </h1>
-  
+        
+      </header>
+      <div align="center" class="post-count">
+          字数：773字 | 预计阅读时长：3分钟
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
 
-        <div class="article-info info-on-right">
-          
+<h2 id="aslr"><a href="#aslr" class="headerlink" title="aslr"></a>aslr</h2><p>aslr(Address space layout randomization)地址空间布局随机化是和pie共同作用以针对缓冲区溢出的一种安全保护技术，作用在程序映射到内存时，通过对加载的虚拟地址进行随机化实现对栈、堆、共享库等线性区的布局随机化，以此避免攻击者定位到确定的函数、gadgets等攻击代码位置达成阻止溢出的目的。</p>
+<p>aslr分为3个等级：</p>
+<p>0、关闭aslr，无任何作用</p>
+<p>1、部分随机化，随机化stack、共享库、mmap()及VDSO的基地址</p>
+<p>2、完全随机化，在1的基础上增加brk()分配的堆内存空间随机化</p>
+<p>ps：aslr是系统自动设置的(也可手动关闭)，开启了aslr后程序每次运行都起作用，即使计算机重启后运行程序也起作用。只开启aslr保护机制的程序中的未初始化全局变量、初始化全局变量和代码段数据段都没变化，但程序中的局部变量地址会发生改变。</p>
+<h2 id="pie"><a href="#pie" class="headerlink" title="pie"></a>pie</h2><p>pie(position-independent executable)地址无关可执行文件是一种与aslr共同使用以对抗缓冲区溢出的一种安全保护机制，在程序编译时设置，针对代码段、数据段、.bss段等固定地址，开启了pie的程序每次每次加载时加载地址都会变换，从而影响如ROPgadget等工具查找gadgets。</p>
+<p>ps：开启了pie的程序会打乱代码段、数据段、plt、got的基址。</p>
+<h2 id="aslr与pie的配合使用"><a href="#aslr与pie的配合使用" class="headerlink" title="aslr与pie的配合使用"></a>aslr与pie的配合使用</h2><p>aslr和pie只开启一个都不足以进行绕过，而两者同时开启可以杜绝大部分针对缓冲区的信息泄露。</p>
+<p>之所以只开启aslr不足以防御缓冲区溢出是因为代码段、数据段等地址没有打乱，还是可以通过泄露其中的数据如plt、got表来获取libc进而得到可利用函数绕过aslr或其中的gadgets，而只开启了pie而没有开启aslr可以直接通过libc获取可利用的函数或gadgets，只有2者同时开启才可以完全避免信息泄露(pwn题中给泄漏点泄露不算)。</p>
+<p>下图是没开pie只开启了aslr的程序的内存地址对比：</p>
+<p><img src="D:/cach/image-20210603162553526.png" alt="image-20210603162553526"></p>
+<p><img src="D:/cach/image-20210603162606021.png" alt="image-20210603162606021"></p>
+<p>下图是开启了pie和aslr的程序的内存地址对比：</p>
+<p><img src="D:/cach/image-20210603163104032.png" alt="image-20210603163104032"></p>
+<p><img src="D:/cach/image-20210603163201647.png" alt="image-20210603163201647"></p>
+<p>下图是只开启了pie没开启aslr的程序的内存地址区别：</p>
+<p><img src="D:/cach/image-20210603170112481.png" alt="image-20210603170112481"></p>
+<p><img src="D:/cach/image-20210603170149284.png" alt="image-20210603170149284"></p>
+<p>总结：</p>
+<p>只开启aslr没开启pie的程序stack、libc等地址会被打乱，代码段等不变。</p>
+<p>只开启pie没开启aslr的程序基地址都不变，只有开启了aslr pie才会起作用。</p>
+<p>开启了aslr和pie的程序stack、lib、代码段、数据段等地址都被打乱。</p>
+<p>最后，现实中的Linux中大部分网络进程会开启pie，但其他大部分程序因为时性能问题(开启pie会导致额外的操作)并没有开启pie，开启pie和未开启pie的程序在几年前的比例可以参考下图：</p>
+<p><img src="D:/cach/image-20210603173125093.png" alt="image-20210603173125093"></p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -334,139 +281,115 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:31:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
 
+  
+<nav id="article-nav">
+  
+    <a href="/2021/06/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          计算机硬件学习
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Linux系统启动流程</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">Linux系统启动流程</a>
-    </h1>
-  
+        
+        
+    </div>
+</aside>
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">操作系统</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/2021Ciscn-wp/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:31:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/2021Ciscn-wp/">2021Ciscn_wp</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">pwn</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/IO-FILE/" class="archive-article-date">
-  	<time datetime="2021-06-05T06:38:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/IO-FILE/">IO_FILE</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">pwn</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -499,8 +422,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,

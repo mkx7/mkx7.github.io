@@ -6,15 +6,30 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Archives | mkx7&#39;blog</title>
+  <title>shell部分基础实现原理 | mkx7&#39;blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="mkx7&#39;blog">
-<meta property="og:url" content="http://example.com/archives/index.html">
+  <meta name="description" content="前置知识​        操作系统为了保证系统安全限制了不同程序间的访问权限，比如为了防止一些程序非法使用其他程序的内存数据，不正确的使用计算机底层资源而对计算机造成破坏，划分了2个权限等级用户态和内核态。 ​        一般用户使用的程序如浏览器，播放器等程序运行在用户态，内核程序运行在内核态，可以访问内存的所有数据，包括计算机的外围设备，如硬盘网卡，用户态的用户态程序只能受限的访问内存">
+<meta property="og:type" content="article">
+<meta property="og:title" content="shell部分基础实现原理">
+<meta property="og:url" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/index.html">
 <meta property="og:site_name" content="mkx7&#39;blog">
+<meta property="og:description" content="前置知识​        操作系统为了保证系统安全限制了不同程序间的访问权限，比如为了防止一些程序非法使用其他程序的内存数据，不正确的使用计算机底层资源而对计算机造成破坏，划分了2个权限等级用户态和内核态。 ​        一般用户使用的程序如浏览器，播放器等程序运行在用户态，内核程序运行在内核态，可以访问内存的所有数据，包括计算机的外围设备，如硬盘网卡，用户态的用户态程序只能受限的访问内存">
 <meta property="og:locale">
+<meta property="og:image" content="d:/cach/image-20210602175714379.png">
+<meta property="og:image" content="d:/cach/image-20210602180030411.png">
+<meta property="og:image" content="d:/cach/image-20210602180050035.png">
+<meta property="og:image" content="d:/cach/image-20210602172642883.png">
+<meta property="og:image" content="d:/cach/cat.png">
+<meta property="og:image" content="d:/cach/fd_offset.png">
+<meta property="og:image" content="d:/cach/output.png">
+<meta property="og:image" content="d:/cach/dup.png">
+<meta property="og:image" content="d:/cach/pipe.png">
+<meta property="article:published_time" content="2021-06-05T12:33:45.000Z">
+<meta property="article:modified_time" content="2021-06-05T12:37:16.941Z">
 <meta property="article:author" content="mkx7">
+<meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="d:/cach/image-20210602175714379.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -171,38 +186,123 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
+            <article id="post-shell部分基础实现原理" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
   
+    <h1 class="article-title" itemprop="name">
+      shell部分基础实现原理
+    </h1>
   
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
+
+        
+        
+        <!-- 不蒜子统计 -->
+        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
+              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
+        </span>
+
 <a href="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="archive-article-date">
   	<time datetime="2021-06-05T12:33:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
 </a>
 
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/">shell部分基础实现原理</a>
-    </h1>
-  
+        
+      </header>
+      <div align="center" class="post-count">
+          字数：2,979字 | 预计阅读时长：10分钟
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
 
-        <div class="article-info info-on-right">
-          
+<h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><p>​        操作系统为了保证系统安全限制了不同程序间的访问权限，比如为了防止一些程序非法使用其他程序的内存数据，不正确的使用计算机底层资源而对计算机造成破坏，划分了2个权限等级用户态和内核态。</p>
+<p>​        一般用户使用的程序如浏览器，播放器等程序运行在用户态，内核程序运行在内核态，可以访问内存的所有数据，包括计算机的外围设备，如硬盘网卡，用户态的用户态程序只能受限的访问内存，不允许使用计算机的底层资源，如硬盘网卡等，但有时用户态需要使用一些计算机的底层资源，如使用IO设备获取或输出数据，从外设如硬盘中获取数据，为了能够使用户态程序能够完成上述目的又产生了一个机制，即系统调用，通过从用户态使用系统调用进入内核态，根据不同的系统调用完成特定的目的。</p>
+<p>​        除了系统调用能够从用户态进入内核态外还有异常和外设中断也能完成从用户态进入内核态的目的，如果说系统调用是人为可控的从用户态切换到内核态，如用户态程序可以使用fork()函数创建子线程，其实就是通过调用sys_fork系统调用切换到内核态完成子线程创建(fork()调用sys_fork系统调用具体实现没有探究过，猜测应该是类似于函数的封装)，那么异常和外设中断则是不可控的，完全由硬件负责的，比如异常即是用户态程序在执行程序时发生了错误，此时的用户态不足以对错误进行处理就需要进入内核态对错误进行处理，此时就需要中断来对异常进行处理(值得一提的是中断也是程序并发中重要的一部分，但和这里不同)，如程序中出现整数除0就是异常。另外中断又分为内中断与外中断，区别在于中断的信号来源于哪里，详细介绍的话系统调用、异常和外设中断都可以独立用一篇笔记记录，这里用一张图省略中断吧：</p>
+<p><img src="D:/cach/image-20210602175714379.png" alt="image-20210602175714379"></p>
+<p>​        从上图中可以发现异常其实就是属于内中断，最后的外设中断属于外中断，虽然其实都是中断但因为中断信号来源不同将其分为两部分，再说一下外设中断，上图的I/O操作完成发生中断信号即是典型的外中断例子，解释的话就是外设在用户态程序正常运行时如果相应的硬件完成了用户的请求会向CPU发出中断信号，使其暂停用户态程序去处理外设，而要使用外设自然要进入内核态，也能完成用户态与内核态的切换。</p>
+<p>​        下面放几张图便于理解：</p>
+<p><img src="D:/cach/image-20210602180030411.png" alt="image-20210602180030411"></p>
+<p><img src="D:/cach/image-20210602180050035.png" alt="image-20210602180050035"></p>
+<p>​        最后前面3者的区别说了再说一下相同点，其实3者最后都是使用的中断。</p>
+<p>​        笔者已知的能够通过系统调用调用计算机底层资源的方法除了库函数外还有shell，终于来到了本文的主题shell：</p>
+<p><img src="D:/cach/image-20210602172642883.png" alt="image-20210602172642883"></p>
+<p>​        shell其实是一个特殊的程序，之所以说它特殊是因为它并不在内核态，仍然处于用户态，但它却可以使用内核态的资源，因为它的命令与库函数一样封装了系统调用，在shell中直接使用命令条即可使用各种系统调用，类似应用程序与硬件间的操作系统，一般一个shell即是一个终端，终端是一个硬件设备。</p>
+<p>​        一个shell的基础主要有进程、内存、文件描述符、管道、文件系统等，下面对其进行介绍。</p>
+<h3 id="进程和内存"><a href="#进程和内存" class="headerlink" title="进程和内存"></a>进程和内存</h3><p>Unix中的进程由内核管理的进程状态信息(PCB)、数据段和指令段组成。</p>
+<p>一般程序创建进程需要用到的系统调用有fork、exec、wait和exit四个系统调用。</p>
+<p>fork：创建一个子进程，子进程与自身共享内存空间，使用写时复制技术，当其中一个进程需要修改数据时将原始数据拷贝一份用以给该进程进行修改数据，之后父子进程独立保存各自的数据。</p>
+<p>exec：使用新的进程空间替换当前的进程空间。</p>
+<p>ps：如何创建一个新进程？先使用fork创建一个子进程，之后的子进程实际上和父进程还是一样的数据，再使用exec将当前进程替换就获得了一个新的独立进程，另外Linux没有进程线程之分，除了init外的所有新进程都是先fork的init进程，之后使用exec对新进程进行占用创建的独立进程。</p>
+<p>wait：暂停当前进程，直到当前进程的一个子进程返回。</p>
+<p>exit：停止当前进程的执行，并该进程释放内存、文件等资源。</p>
+<p>类unix中的shell就是使用上述系统调用来运行用户传入的指令：</p>
+<p>先在main函数中定义一个getcmd()函数循环调用，使其读取接收用户的命令条输入，之后对于每条命令都通过fork去创建子进程去处理命令，处理命令由定义的runcmd()函数实现，然后父进程通过wait等待子进程执行结束。</p>
+<p>runcmd()：通过exec加载实际的目标程序(如”echo hello”)来替代当前的runcmd进程，当执行结束后目标程序(如”echo”)会自己调用exit，从而退回到之前main函数的wait地址等待处理之后的命令。</p>
+<p>可以把进程的创建看作shell的执行基础。</p>
+<h3 id="I-O和文件描述符"><a href="#I-O和文件描述符" class="headerlink" title="I/O和文件描述符"></a><strong>I/O和文件描述符</strong></h3><p>unix中所有可以进行I/O操作的进程都可以当作“文件”，每个进程使用一个文件描述符来对其进行访问，包括打开文件、目录、设备、创建一个管道，都可以看作字节流来访问。</p>
+<p>shell默认会一直打开3个文件描述符：0(stdin),  1(stdout),  2(stderr)。文件描述符其实就是一个与访问对象绑定的整数，从0开始依次加1；新分配的文件描述符总是当前进程未被使用的最小描述符。</p>
+<p>通过文件描述符和fork可以实现shell中的I/O重定向，fork出来的子进程与父进程共享文件描述符表，父进程之前打开的文件，子进程都可以直接去访问。exec虽然会替换掉当前进程空间，但是它会将文件描述符表保存下来，所以shell可以通过“fork+打开重定向的文件+exec”来实现I/O重定向。下面是 cat &lt; input.txt 的例子，cat默认会从0描述符中读，往1描述符中写：</p>
+<p><img src="D:/cach/cat.png" alt="cat.png"></p>
+<p>close(0)关闭0描述符</p>
+<p>open打开需要重定向的文件，返回当前可用的最小描述符即0，因此0描述符便和input.txt文件绑定</p>
+<p>exec(“cat”,argv)执行cat命令，由于exec会将文件描述表保存下来，因此cat会从0描述符读取，就相当于从input.txt文件中读取，然后往1(stdout)描述符中写，从而实现读取重定向</p>
+<p>输出重定向类似读取重定向，通过close(1)和open()，将重定向文件与1描述符绑定</p>
+<p>需要注意fork会在父子进程间共享文件描述符表，但是一旦某一方对其进行修改了则会copy一份(相当于初始内存相同，之后数据分开保存)，然而文件偏移则是一直共享的，即一方写完后另一方再写则是连续下去写的，看下面一个例子：</p>
+<p><img src="D:/cach/fd_offset.png" alt="fd_offset">    输出结果： <img src="D:/cach/output.png" alt="output"></p>
+<p>除了fork是会共享文件偏移的，dup系统调用复制的一个新文件描述符也与原描述符共享文件偏移（dup返回的描述符也是当前可用的最小描述符）：</p>
+<p><img src="D:/cach/dup.png" alt="dup">输出结果也是：hello world</p>
+<h3 id="管道Pipes"><a href="#管道Pipes" class="headerlink" title="管道Pipes"></a><strong>管道Pipes</strong></h3><p>管道是一段内核缓冲区，使用一对文件描述符对其进行操作，即一个写一个读，可用于进程间通信，下面看一个例子：</p>
+<p><img src="D:/cach/pipe.png" alt="pipe"></p>
+<p>通过pipe系统调用创建一个管道，并将其读写文件描述符保存在 数组p中（p[0]：read，p[1]：write）</p>
+<p>通过fork创建子进程，父子进程共享p[0]和p[1]</p>
+<p>子进程：通过dup将p[0]绑定，即与0(stdin)绑定，之后执行/bin/wc程序时就会从p[0]描述符中读取输入</p>
+<p>父进程：直接往p[1]中写，即此时管道中有数据了，然后子进程便会读取数据进行操作，当然父进程中也可以通过exec执行命令自动往p[1]中写入数据，即通过close(1)，dup(p[1])将p[1]描述符与1(stdout)绑定</p>
+<p>shell中的管道也可以像上面这么实现，如 ls | wc -l</p>
+<p>创建1个管道，调用2次fork，创建2个子进程，分别调用runcmd()来处理管道左边和右边的命令。</p>
+<p>左边负责往管道写 — close(1)，dup(p[1])，右边负责从管道读 — close(0)，dup(p[0])，父进程调用2次wait，等待2个子进程结束再返回。</p>
+<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a><strong>文件系统</strong></h3><p>文件系统包括文件和目录，其中目录是一种树形的结构，根结点为root目录。</p>
+<p>在文件系统中涉及到的系统调用有：</p>
+<p>chdir 切换目录，mkdir 创建目录</p>
+<p>mknod 创建设备文件，mknod(设备文件名，主设备号， 次设备号)</p>
+<p>open/read/write 操作文件</p>
+<p>fstat 获取文件描述符指向文件对象的信息</p>
+<p>link 创建(硬)链接，即有多个文件名指向相同的索引节点inode，因此当把其中一个删除了，其他文件的内容仍然保留</p>
+<p>symlink 创建软链接文件，该文件指向新的inode，并记录了指向原文件inode的路径信息，当把原文件删除了，该链接文件的内容也不存在了</p>
+<p>unlink 删除一个文件并减少它的链接数，只有当这个文件对应的inode节点的链接数为0且没有指向它的文件描述符时，才会释放对应的磁盘空间</p>
+<p>类unix可以将文件系统的操作实现为用户级别的程序（如: mkdir, ln, rm  …），而不是嵌入在shell中，因此在shell中只需要通过exec来加载对应的可执行文件（如:  /bin/mkdir），即可实现用户想执行的命令行功能。但有一个例外：cd命令，因为shell执行命令是通过fork创建子进程来执行的，这样的话对于cd命令就只是子进程切换了目录，父进程并没有，从而用户输入下一条命令时还是从父进程处fork一份去执行，因此目录始终是原始目录。所以，cd命令需要在shell中实现（直接调用chdir syscall），而不是通过在一个用户程序中实现，然后在shell中调用exec(“/bin/cd”)来执行。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>上面的shell实现实际上并不完整，讲解也不算深入，是笔者偶尔看了一篇博客后抄的，以后如果有时间再学习下补充。s</p>
+
+      
+
+      
+        <div class="page-reward">
+          <a href="javascript:;" class="page-reward-btn tooltip-top">
+            <div class="tooltip tooltip-east">
+            <span class="tooltip-item">
+              赏
+            </span>
+            <span class="tooltip-content">
+              <span class="tooltip-text">
+                <span class="tooltip-inner">
+                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
+                  <div class="reward-box">
+                    
+                    
+                  </div>
+                </span>
+              </span>
+            </span>
+          </div>
+          </a>
+        </div>
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -214,259 +314,106 @@
 		</ul>
 	</div>
 
-          
+      
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/%E4%B8%80%E4%BA%9B%E4%B8%8E%E5%87%BD%E6%95%B0%E6%9C%89%E5%85%B3%E7%9A%84%E6%BA%A2%E5%87%BA%E9%97%AE%E9%A2%98/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:32:47.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
 
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2021/06/05/%E4%B8%80%E4%BA%9B%E4%B8%8E%E5%87%BD%E6%95%B0%E6%9C%89%E5%85%B3%E7%9A%84%E6%BA%A2%E5%87%BA%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">一些函数溢出问题</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
         </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/%E4%B8%80%E4%BA%9B%E4%B8%8E%E5%87%BD%E6%95%B0%E6%9C%89%E5%85%B3%E7%9A%84%E6%BA%A2%E5%87%BA%E9%97%AE%E9%A2%98/">一些函数溢出问题</a>
-    </h1>
-  
+        
+        
+    </div>
+</aside>
 
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">漏洞</a>
-        		</li>
-      		
-		</ul>
-	</div>
 
-          
 
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:32:33.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A1%AC%E4%BB%B6%E5%AD%A6%E4%B9%A0/">计算机硬件学习</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">计算机组成</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:32:15.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/">Linux下aslr与pie</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">pwn</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:31:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">Linux系统启动流程</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">操作系统</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/2021Ciscn-wp/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:31:16.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/2021Ciscn-wp/">2021Ciscn_wp</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">pwn</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	
-<a href="/2021/06/05/IO-FILE/" class="archive-article-date">
-  	<time datetime="2021-06-05T06:38:20.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/06/05/IO-FILE/">IO_FILE</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">pwn</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
   
   
-    </div></section>
   
 
-    
+  
+
+  
+
+  
 
 
           </div>
@@ -499,8 +446,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
-		isArchive: true,
+		isPost: true,
+		isArchive: false,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,
