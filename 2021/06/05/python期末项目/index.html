@@ -6,30 +6,27 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>shell部分基础实现原理 | mkx7&#39;blog</title>
+  <title>python期末项目 | mkx7&#39;blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录shell是如何实现的，实例以后有时间补上。">
+  <meta name="description" content="python期末项目学习记录">
 <meta property="og:type" content="article">
-<meta property="og:title" content="shell部分基础实现原理">
-<meta property="og:url" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:title" content="python期末项目">
+<meta property="og:url" content="http://example.com/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/index.html">
 <meta property="og:site_name" content="mkx7&#39;blog">
-<meta property="og:description" content="记录shell是如何实现的，实例以后有时间补上。">
+<meta property="og:description" content="python期末项目学习记录">
 <meta property="og:locale">
-<meta property="og:image" content="d:/cach/image-20210602175714379.png">
-<meta property="og:image" content="d:/cach/image-20210602180030411.png">
-<meta property="og:image" content="d:/cach/image-20210602180050035.png">
-<meta property="og:image" content="d:/cach/image-20210602172642883.png">
-<meta property="og:image" content="d:/cach/cat.png">
-<meta property="og:image" content="d:/cach/fd_offset.png">
-<meta property="og:image" content="d:/cach/output.png">
-<meta property="og:image" content="d:/cach/dup.png">
-<meta property="og:image" content="d:/cach/pipe.png">
-<meta property="article:published_time" content="2021-06-05T12:33:45.000Z">
-<meta property="article:modified_time" content="2021-06-05T12:47:29.058Z">
+<meta property="og:image" content="http://example.com/cach/image-20210605220135261.png">
+<meta property="og:image" content="http://example.com/cach/image-20210605220716356.png">
+<meta property="og:image" content="http://example.com/cach/image-20210606121917658.png">
+<meta property="og:image" content="http://example.com/cach/image-20210606134343308.png">
+<meta property="og:image" content="http://example.com/cach/image-20210606135433423.png">
+<meta property="og:image" content="http://example.com/cach/image-20210606134630905.png">
+<meta property="article:published_time" content="2021-06-05T13:41:01.000Z">
+<meta property="article:modified_time" content="2021-06-06T11:39:33.113Z">
 <meta property="article:author" content="mkx7">
-<meta property="article:tag" content="操作系统">
+<meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="d:/cach/image-20210602175714379.png">
+<meta name="twitter:image" content="http://example.com/cach/image-20210605220135261.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -186,14 +183,14 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-shell部分基础实现原理" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-python期末项目" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      shell部分基础实现原理
+      python期末项目
     </h1>
   
 
@@ -204,77 +201,224 @@
               <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
         </span>
 
-<a href="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:33:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
+<a href="/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/" class="archive-article-date">
+  	<time datetime="2021-06-05T13:41:01.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
 </a>
 
         
       </header>
       <div align="center" class="post-count">
-          字数：2,997字 | 预计阅读时长：11分钟
+          字数：2,506字 | 预计阅读时长：9分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>记录shell是如何实现的，实例以后有时间补上。</p>
+        <p>python期末项目学习记录</p>
 <span id="more"></span>
 
-<h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><p>​        操作系统为了保证系统安全限制了不同程序间的访问权限，比如为了防止一些程序非法使用其他程序的内存数据，不正确的使用计算机底层资源而对计算机造成破坏，划分了2个权限等级用户态和内核态。</p>
-<p>​        一般用户使用的程序如浏览器，播放器等程序运行在用户态，内核程序运行在内核态，可以访问内存的所有数据，包括计算机的外围设备，如硬盘网卡，用户态的用户态程序只能受限的访问内存，不允许使用计算机的底层资源，如硬盘网卡等，但有时用户态需要使用一些计算机的底层资源，如使用IO设备获取或输出数据，从外设如硬盘中获取数据，为了能够使用户态程序能够完成上述目的又产生了一个机制，即系统调用，通过从用户态使用系统调用进入内核态，根据不同的系统调用完成特定的目的。</p>
-<p>​        除了系统调用能够从用户态进入内核态外还有异常和外设中断也能完成从用户态进入内核态的目的，如果说系统调用是人为可控的从用户态切换到内核态，如用户态程序可以使用fork()函数创建子线程，其实就是通过调用sys_fork系统调用切换到内核态完成子线程创建(fork()调用sys_fork系统调用具体实现没有探究过，猜测应该是类似于函数的封装)，那么异常和外设中断则是不可控的，完全由硬件负责的，比如异常即是用户态程序在执行程序时发生了错误，此时的用户态不足以对错误进行处理就需要进入内核态对错误进行处理，此时就需要中断来对异常进行处理(值得一提的是中断也是程序并发中重要的一部分，但和这里不同)，如程序中出现整数除0就是异常。另外中断又分为内中断与外中断，区别在于中断的信号来源于哪里，详细介绍的话系统调用、异常和外设中断都可以独立用一篇笔记记录，这里用一张图省略中断吧：</p>
-<p><img src="D:/cach/image-20210602175714379.png" alt="image-20210602175714379"></p>
-<p>​        从上图中可以发现异常其实就是属于内中断，最后的外设中断属于外中断，虽然其实都是中断但因为中断信号来源不同将其分为两部分，再说一下外设中断，上图的I/O操作完成发生中断信号即是典型的外中断例子，解释的话就是外设在用户态程序正常运行时如果相应的硬件完成了用户的请求会向CPU发出中断信号，使其暂停用户态程序去处理外设，而要使用外设自然要进入内核态，也能完成用户态与内核态的切换。</p>
-<p>​        下面放几张图便于理解：</p>
-<p><img src="D:/cach/image-20210602180030411.png" alt="image-20210602180030411"></p>
-<p><img src="D:/cach/image-20210602180050035.png" alt="image-20210602180050035"></p>
-<p>​        最后前面3者的区别说了再说一下相同点，其实3者最后都是使用的中断。</p>
-<p>​        笔者已知的能够通过系统调用调用计算机底层资源的方法除了库函数外还有shell，终于来到了本文的主题shell：</p>
-<p><img src="D:/cach/image-20210602172642883.png" alt="image-20210602172642883"></p>
-<p>​        shell其实是一个特殊的程序，之所以说它特殊是因为它并不在内核态，仍然处于用户态，但它却可以使用内核态的资源，因为它的命令与库函数一样封装了系统调用，在shell中直接使用命令条即可使用各种系统调用，类似应用程序与硬件间的操作系统，一般一个shell即是一个终端，终端是一个硬件设备。</p>
-<p>​        一个shell的基础主要有进程、内存、文件描述符、管道、文件系统等，下面对其进行介绍。</p>
-<h3 id="进程和内存"><a href="#进程和内存" class="headerlink" title="进程和内存"></a>进程和内存</h3><p>Unix中的进程由内核管理的进程状态信息(PCB)、数据段和指令段组成。</p>
-<p>一般程序创建进程需要用到的系统调用有fork、exec、wait和exit四个系统调用。</p>
-<p>fork：创建一个子进程，子进程与自身共享内存空间，使用写时复制技术，当其中一个进程需要修改数据时将原始数据拷贝一份用以给该进程进行修改数据，之后父子进程独立保存各自的数据。</p>
-<p>exec：使用新的进程空间替换当前的进程空间。</p>
-<p>ps：如何创建一个新进程？先使用fork创建一个子进程，之后的子进程实际上和父进程还是一样的数据，再使用exec将当前进程替换就获得了一个新的独立进程，另外Linux没有进程线程之分，除了init外的所有新进程都是先fork的init进程，之后使用exec对新进程进行占用创建的独立进程。</p>
-<p>wait：暂停当前进程，直到当前进程的一个子进程返回。</p>
-<p>exit：停止当前进程的执行，并该进程释放内存、文件等资源。</p>
-<p>类unix中的shell就是使用上述系统调用来运行用户传入的指令：</p>
-<p>先在main函数中定义一个getcmd()函数循环调用，使其读取接收用户的命令条输入，之后对于每条命令都通过fork去创建子进程去处理命令，处理命令由定义的runcmd()函数实现，然后父进程通过wait等待子进程执行结束。</p>
-<p>runcmd()：通过exec加载实际的目标程序(如”echo hello”)来替代当前的runcmd进程，当执行结束后目标程序(如”echo”)会自己调用exit，从而退回到之前main函数的wait地址等待处理之后的命令。</p>
-<p>可以把进程的创建看作shell的执行基础。</p>
-<h3 id="I-O和文件描述符"><a href="#I-O和文件描述符" class="headerlink" title="I/O和文件描述符"></a><strong>I/O和文件描述符</strong></h3><p>unix中所有可以进行I/O操作的进程都可以当作“文件”，每个进程使用一个文件描述符来对其进行访问，包括打开文件、目录、设备、创建一个管道，都可以看作字节流来访问。</p>
-<p>shell默认会一直打开3个文件描述符：0(stdin),  1(stdout),  2(stderr)。文件描述符其实就是一个与访问对象绑定的整数，从0开始依次加1；新分配的文件描述符总是当前进程未被使用的最小描述符。</p>
-<p>通过文件描述符和fork可以实现shell中的I/O重定向，fork出来的子进程与父进程共享文件描述符表，父进程之前打开的文件，子进程都可以直接去访问。exec虽然会替换掉当前进程空间，但是它会将文件描述符表保存下来，所以shell可以通过“fork+打开重定向的文件+exec”来实现I/O重定向。下面是 cat &lt; input.txt 的例子，cat默认会从0描述符中读，往1描述符中写：</p>
-<p><img src="D:/cach/cat.png" alt="cat.png"></p>
-<p>close(0)关闭0描述符</p>
-<p>open打开需要重定向的文件，返回当前可用的最小描述符即0，因此0描述符便和input.txt文件绑定</p>
-<p>exec(“cat”,argv)执行cat命令，由于exec会将文件描述表保存下来，因此cat会从0描述符读取，就相当于从input.txt文件中读取，然后往1(stdout)描述符中写，从而实现读取重定向</p>
-<p>输出重定向类似读取重定向，通过close(1)和open()，将重定向文件与1描述符绑定</p>
-<p>需要注意fork会在父子进程间共享文件描述符表，但是一旦某一方对其进行修改了则会copy一份(相当于初始内存相同，之后数据分开保存)，然而文件偏移则是一直共享的，即一方写完后另一方再写则是连续下去写的，看下面一个例子：</p>
-<p><img src="D:/cach/fd_offset.png" alt="fd_offset">    输出结果： <img src="D:/cach/output.png" alt="output"></p>
-<p>除了fork是会共享文件偏移的，dup系统调用复制的一个新文件描述符也与原描述符共享文件偏移（dup返回的描述符也是当前可用的最小描述符）：</p>
-<p><img src="D:/cach/dup.png" alt="dup">输出结果也是：hello world</p>
-<h3 id="管道Pipes"><a href="#管道Pipes" class="headerlink" title="管道Pipes"></a><strong>管道Pipes</strong></h3><p>管道是一段内核缓冲区，使用一对文件描述符对其进行操作，即一个写一个读，可用于进程间通信，下面看一个例子：</p>
-<p><img src="D:/cach/pipe.png" alt="pipe"></p>
-<p>通过pipe系统调用创建一个管道，并将其读写文件描述符保存在 数组p中（p[0]：read，p[1]：write）</p>
-<p>通过fork创建子进程，父子进程共享p[0]和p[1]</p>
-<p>子进程：通过dup将p[0]绑定，即与0(stdin)绑定，之后执行/bin/wc程序时就会从p[0]描述符中读取输入</p>
-<p>父进程：直接往p[1]中写，即此时管道中有数据了，然后子进程便会读取数据进行操作，当然父进程中也可以通过exec执行命令自动往p[1]中写入数据，即通过close(1)，dup(p[1])将p[1]描述符与1(stdout)绑定</p>
-<p>shell中的管道也可以像上面这么实现，如 ls | wc -l</p>
-<p>创建1个管道，调用2次fork，创建2个子进程，分别调用runcmd()来处理管道左边和右边的命令。</p>
-<p>左边负责往管道写 — close(1)，dup(p[1])，右边负责从管道读 — close(0)，dup(p[0])，父进程调用2次wait，等待2个子进程结束再返回。</p>
-<h3 id="文件系统"><a href="#文件系统" class="headerlink" title="文件系统"></a><strong>文件系统</strong></h3><p>文件系统包括文件和目录，其中目录是一种树形的结构，根结点为root目录。</p>
-<p>在文件系统中涉及到的系统调用有：</p>
-<p>chdir 切换目录，mkdir 创建目录</p>
-<p>mknod 创建设备文件，mknod(设备文件名，主设备号， 次设备号)</p>
-<p>open/read/write 操作文件</p>
-<p>fstat 获取文件描述符指向文件对象的信息</p>
-<p>link 创建(硬)链接，即有多个文件名指向相同的索引节点inode，因此当把其中一个删除了，其他文件的内容仍然保留</p>
-<p>symlink 创建软链接文件，该文件指向新的inode，并记录了指向原文件inode的路径信息，当把原文件删除了，该链接文件的内容也不存在了</p>
-<p>unlink 删除一个文件并减少它的链接数，只有当这个文件对应的inode节点的链接数为0且没有指向它的文件描述符时，才会释放对应的磁盘空间</p>
-<p>类unix可以将文件系统的操作实现为用户级别的程序（如: mkdir, ln, rm  …），而不是嵌入在shell中，因此在shell中只需要通过exec来加载对应的可执行文件（如:  /bin/mkdir），即可实现用户想执行的命令行功能。但有一个例外：cd命令，因为shell执行命令是通过fork创建子进程来执行的，这样的话对于cd命令就只是子进程切换了目录，父进程并没有，从而用户输入下一条命令时还是从父进程处fork一份去执行，因此目录始终是原始目录。所以，cd命令需要在shell中实现（直接调用chdir syscall），而不是通过在一个用户程序中实现，然后在shell中调用exec(“/bin/cd”)来执行。</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>上面的shell实现实际上并不完整，讲解也不算深入，是笔者偶尔看了一篇博客后抄的，以后如果有时间再学习下补充。s</p>
+<p>期末项目因为时间问题没有自己做，就在GitHub上找了个项目替代，正好想了解一下人工智能，就找了个刘焕勇老师的项目来学习下nlp(自然语言处理，人工智能下的一个分支)。</p>
+<p>项目地址：<a target="_blank" rel="noopener" href="https://github.com/liuhuanyong/QASystemOnMedicalKG">https://github.com/liuhuanyong/QASystemOnMedicalKG</a></p>
+<h2 id="实现过程"><a href="#实现过程" class="headerlink" title="实现过程"></a>实现过程</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><p>环境Ubuntu20.04</p>
+<p>需要使用的工具：Java8(openjdk1.8.0_292)、neo4j数据库(本人neo4j3-5.28)、python3(本人python3.8.5)，剩下的一些零碎python包根据使用时报错提示下载即可</p>
+<p>Java安装步骤略。</p>
+<p>neo4j下载地址：<a target="_blank" rel="noopener" href="https://neo4j.com/download-thanks/?edition=community&amp;release=3.5.28&amp;flavour=unix&amp;_gl=1">https://neo4j.com/download-thanks/?edition=community&amp;release=3.5.28&amp;flavour=unix&amp;_gl=1</a></p>
+<p>Ubuntu下载好后解压完先进入conf修改neo4j.conf文件，找到下面的代码后去掉注释#：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 允许远程访问</span><br><span class="line">dbms.connectors.default_listen_address=0.0.0.0</span><br><span class="line"># 开启bolt服务，默认端口7687</span><br><span class="line">dbms.connector.bolt.listen_address=:7687</span><br><span class="line"># 开启http服务，默认端口7474</span><br><span class="line">dbms.connector.http.listen_address=:7474</span><br><span class="line"># 开启https服务，默认端口7473</span><br><span class="line">dbms.connector.https.listen_address=:7473</span><br></pre></td></tr></table></figure>
+
+<p>然后进入bin文件，先chmod +x neo4j赋予neo4j运行权限，再输入./neo4j console运行neo4j：</p>
+<p><img src="../../../../cach/image-20210605220135261.png" alt="image-20210605220135261"></p>
+<p>之后打开<a target="_blank" rel="noopener" href="http://localhost:7474/%E5%8E%BB%E9%85%8D%E7%BD%AEneo4j%EF%BC%8C%E5%88%9D%E5%A7%8B%E8%B4%A6%E6%88%B7%E5%90%8D%E5%92%8C%E5%AF%86%E7%A0%81%E9%83%BD%E6%98%AFneo4j%EF%BC%8C%E7%99%BB%E5%BD%95%E5%90%8E%E8%87%AA%E5%8A%A8%E4%BF%AE%E6%94%B9%EF%BC%8C%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81%E5%8A%A1%E5%BF%85%E8%AE%B0%E4%BD%8F%E5%90%8E%E9%9D%A2%E4%BC%9A%E7%94%A8%EF%BC%8C%E5%8F%A6%E5%A4%96%E6%9C%8D%E5%8A%A1%E5%85%88%E5%88%AB%E5%85%B3%E9%97%AD%E3%80%82">http://localhost:7474/去配置neo4j，初始账户名和密码都是neo4j，登录后自动修改，修改密码务必记住后面会用，另外服务先别关闭。</a></p>
+<h3 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h3><p>下载好项目后解压进入文件中，找到这个py脚本，将build_medicalgraph.py和answer_search.py中的self.g=Graph·······换成self.g = Graph(“<a href="http://localhost:7474&quot;">http://localhost:7474&quot;</a>, auth=(“你的neo4j账户名”,”你的密码”))，之后运行这个py脚本向neo4j内导入数据：</p>
+<p><img src="../../../../cach/image-20210605220716356.png" alt="image-20210605220716356"></p>
+<p>ps：导入时间较长，大约几个小时</p>
+<p>完成后neo4j服务不要关闭，再运行chatbot_graph.py即可正常运行：</p>
+<p><img src="../../../../cach/image-20210606121917658.png" alt="image-20210606121917658"></p>
+<h2 id="项目实现"><a href="#项目实现" class="headerlink" title="项目实现"></a>项目实现</h2><p>以上是直接使用刘老师写好的文件，之后分析下该项目如何实现的。</p>
+<h3 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h3><p>该项目是一个以医学为中心的医药领域问答系统，包含7类数量为4.4万的知识实体，10类数量为30万实体关系的知识图谱，根据知识图谱完成自动问答与分析服务。</p>
+<p>实现重点在于实现基于垂直网站数据的医药知识图谱构建和基于医药知识图谱的自动问答。</p>
+<p>7类知识实体：</p>
+<table>
+<thead>
+<tr>
+<th>实体类型</th>
+<th>含义</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>check</td>
+<td>检查诊断项目</td>
+<td>3353</td>
+</tr>
+<tr>
+<td>department</td>
+<td>科目</td>
+<td>54</td>
+</tr>
+<tr>
+<td>disease</td>
+<td>疾病</td>
+<td>8807</td>
+</tr>
+<tr>
+<td>drug</td>
+<td>药品</td>
+<td>3828</td>
+</tr>
+<tr>
+<td>food</td>
+<td>食物</td>
+<td>4870</td>
+</tr>
+<tr>
+<td>producer</td>
+<td>药品</td>
+<td>17201</td>
+</tr>
+<tr>
+<td>symptom</td>
+<td>疾病症状</td>
+<td>5998</td>
+</tr>
+</tbody></table>
+<p>10类实体关系：</p>
+<table>
+<thead>
+<tr>
+<th>实体关系类型</th>
+<th>含义</th>
+<th>数量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>belongs_to</td>
+<td>属于</td>
+<td>8844</td>
+</tr>
+<tr>
+<td>common_drug</td>
+<td>疾病常吃药品</td>
+<td>14649</td>
+</tr>
+<tr>
+<td>do_eat</td>
+<td>疾病常吃食物</td>
+<td>22238</td>
+</tr>
+<tr>
+<td>drugs_of</td>
+<td>在售药品</td>
+<td>17315</td>
+</tr>
+<tr>
+<td>need_check</td>
+<td>疾病检查</td>
+<td>39422</td>
+</tr>
+<tr>
+<td>no_eat</td>
+<td>疾病忌吃食物</td>
+<td>22247</td>
+</tr>
+<tr>
+<td>recommand_drug</td>
+<td>疾病推荐药品</td>
+<td>59467</td>
+</tr>
+<tr>
+<td>recommand_eat</td>
+<td>疾病推荐食谱</td>
+<td>40221</td>
+</tr>
+<tr>
+<td>has_symptom</td>
+<td>疾病症状</td>
+<td>5998</td>
+</tr>
+<tr>
+<td>acompany_with</td>
+<td>疾病并发疾病</td>
+<td>12029</td>
+</tr>
+</tbody></table>
+<p>知识图谱属性类型：</p>
+<table>
+<thead>
+<tr>
+<th>属性类型</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>name</td>
+<td>疾病名称</td>
+</tr>
+<tr>
+<td>desc</td>
+<td>疾病简介</td>
+</tr>
+<tr>
+<td>cause</td>
+<td>疾病病因</td>
+</tr>
+<tr>
+<td>prevent</td>
+<td>预防措施</td>
+</tr>
+<tr>
+<td>cure_lasttime</td>
+<td>治疗周期</td>
+</tr>
+<tr>
+<td>cure_way</td>
+<td>治疗方式</td>
+</tr>
+<tr>
+<td>cured_prob</td>
+<td>治愈概率</td>
+</tr>
+<tr>
+<td>easy_get</td>
+<td>疾病易感人群</td>
+</tr>
+</tbody></table>
+<p>项目优点：采用规则匹配方式建立了完善的问题查询与回答机制，使用方便。</p>
+<p>项目缺点：数据不够详细，一些问题如疾病的引发、预防等回答结果用一大段文字描述不够精准，这点可通过引入事件抽取将原因结构化表示进行优化。</p>
+<h3 id="项目层次"><a href="#项目层次" class="headerlink" title="项目层次"></a>项目层次</h3><p><img src="../../../../cach/image-20210606134343308.png" alt="image-20210606134343308"></p>
+<p><img src="../../../../cach/image-20210606135433423.png" alt="image-20210606135433423"></p>
+<p><img src="../../../../cach/image-20210606134630905.png" alt="image-20210606134630905"></p>
+<h3 id="项目目录"><a href="#项目目录" class="headerlink" title="项目目录"></a>项目目录</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">├── QASystemOnMedicalKG                #  项目名称</span><br><span class="line">    ├── answer_search.py               #  问题查询及返回查询结果</span><br><span class="line">    ├── build_medicalgraph.py          #  将结构化json数据导入neo4j数据库</span><br><span class="line">    ├── chatbot_graph.py               #  问答程序脚本</span><br><span class="line">    ├── QASystemOnMedicalKG/data       #  数据</span><br><span class="line">        ├── hepatopathy.json           #  肝病知识数据</span><br><span class="line">        ├── medical.json               #  全部知识数据</span><br><span class="line">    ├── QASystemOnMedicalKG/dict       #  关系</span><br><span class="line">        ├── check.txt                  #  诊断检查项目实体库</span><br><span class="line">        ├── deny.txt                   #  否定词库</span><br><span class="line">        ├── department.txt             #  医疗科目实体库</span><br><span class="line">        ├── disease.txt                #  疾病实体库</span><br><span class="line">        ├── drug.txt                   #  药品实体库</span><br><span class="line">        ├── food.txt                   #  食物实体库</span><br><span class="line">        ├── producer.txt               #  在售药品库</span><br><span class="line">        ├── symptom.txt                #  疾病症状实体库</span><br><span class="line">    ├── QASystemOnMedicalKG/prepare_data</span><br><span class="line">        ├── build_data.py              #  数据库操作脚本</span><br><span class="line">        ├── data_spider.py             #  数据采集脚本</span><br><span class="line">        ├── max_cut.py                 #  基于词典的最大前向/后向匹配</span><br><span class="line">    ├── question_classifier.py         #  问句类型分类脚本</span><br><span class="line">    ├── question_parser.py             #  问句解析脚本</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h3><p>数据采集部分使用的data_spider.py爬虫脚本，爬取的<a target="_blank" rel="noopener" href="http://jib.xywy.com/%E7%BD%91%E7%AB%99%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%8C%E7%88%AC%E8%99%AB%E4%BD%BF%E7%94%A8%E7%9A%84urllib%E5%BA%93%EF%BC%8C%E7%88%AC%E5%8F%96%E7%9A%84%E6%95%B0%E6%8D%AE%E6%A0%B9%E6%8D%AE%E5%88%86%E7%B1%BB%E5%88%86%E4%B8%BA7%E7%A7%8D%E6%94%BE%E5%9C%A8MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%EF%BC%8C%E5%85%B6%E4%B8%AD%E5%85%B3%E4%BA%8E%E5%B9%B6%E5%8F%91%E7%97%87%E9%83%A8%E5%88%86%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8%E4%BA%86max_cut%E5%8C%B9%E9%85%8D%E8%84%9A%E6%9C%AC%E4%B8%AD%E7%9A%84%E5%8F%8C%E5%90%91%E6%9C%80%E5%A4%A7%E5%90%91%E5%89%8D%E5%8C%B9%E9%85%8Dmax_biward_cut%E3%80%82">http://jib.xywy.com/网站上的数据，爬虫使用的urllib库，爬取的数据根据分类分为7种放在MongoDB数据库中，其中关于并发症部分的数据使用了max_cut匹配脚本中的双向最大向前匹配max_biward_cut。</a></p>
+<h3 id="数据存储"><a href="#数据存储" class="headerlink" title="数据存储"></a>数据存储</h3><p>数据存储部分使用的build_medicalgraph.py脚本。init初始化连接neo4j数据库并获取存储数据的文件路径。read_nodes读取文件中的数据，并获取实体和实体间的关系。create_node创建不包含属性的neo4j数据库节点。create_diseases_nodes创建带有属性的neo4j数据库节点。create_graphnodes创建知识图谱实体。create_graphrels创建知识图谱关系。create_relationship创建实体关系边。export_data方法导出数据到TXT文件中。</p>
+<h3 id="问答实现"><a href="#问答实现" class="headerlink" title="问答实现"></a>问答实现</h3><p>本项目的问答系统完全基于规则匹配实现，通过关键词匹配对问题进行分类，因为该项目中的问题都是医疗问题，问题本身答案有限封闭，所以可以对查询问题进行穷举并分类，之后使用cypher查询语言的match去匹配查找neo4j数据库中存储的数据，根据返回数据组装问句回答，最后返回结果，因为数据量问题，可能存在没有相关数据的问题，如果没有相关数据则返回提前设置好的回答结果。</p>
+<p>大致实现流程为：对问题进行分类，提取其中的关键词，对关键词进行分类，根据关键词对数据进行匹配，返回匹配结果，整理结果返回答案。</p>
+<h4 id="问答脚本"><a href="#问答脚本" class="headerlink" title="问答脚本"></a>问答脚本</h4><p>chatbot_graph.py脚本是该项目的问答框架，主要实现问题分析、数据查询、返回答案三部分。</p>
+<p>具体实现为init实例化handler，chat_main先接收问题，再对输入问题进行分类，不存在此类问题则返回默认回答，存在此类问题则调用搜索数据的脚本，找到相应数据后返回数据并输出回答。</p>
+<h4 id="问题分类"><a href="#问题分类" class="headerlink" title="问题分类"></a>问题分类</h4><p>question_classifiler.py负责对读取问题的分类。</p>
+<p>init先读取问题中的所有特征词，之后根据所有特征词构造领域的actree(便于后续的特征词提取)，再获取特征词类型并根据特征词构造该问题的特征词词典。classify根据特征词词典对问题进行分类并判断问题类型，如果不存在该问题类型则直接返回相关问题的特征词描述信息，若查到则将分类问题的类型及特征词进行合并组装成字典并返回。</p>
+<h4 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h4><p>question_parser.py在问题分类后对问题进行分析。</p>
+<p>parser_main根据问题分类结果获取问题中的特征词及问题类型。build_entitydict从问题分类的返回结果进行整理返回一个参数字典。sql_transfer使用neo4j的cypher查询语言根据参数字典返回查询语句并整理组合查询语句。</p>
+<h4 id="信息查询"><a href="#信息查询" class="headerlink" title="信息查询"></a>信息查询</h4><p>answer_search.py负责查询neo4j中的信息并对返回信息进行整理。</p>
+<p>init连接neo4j。search_main接收问题分析部分返回的cypher查询语句并执行查询语句去获取查询结果。answer_prettify调用相应的回复模板将之前查询到的结果与模板进行结合返回问题的答案。</p>
+<h3 id="项目优化"><a href="#项目优化" class="headerlink" title="项目优化"></a>项目优化</h3><h4 id="实体填充"><a href="#实体填充" class="headerlink" title="实体填充"></a>实体填充</h4><p>用户提问时可能会发生这种情况：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">用户：感冒怎么治？</span><br><span class="line">性感小高，在线解惑：可以xxxxxxx。</span><br><span class="line">用户：那要吃什么药？</span><br><span class="line">性感小高，在线解惑：可以吃xxxxxxx</span><br></pre></td></tr></table></figure>
+
+<p>未优化前第二次提问时因为关键词不够会默认回答，优化后就会采用第一次提问时的特征词，这里是感冒，默认问题为感冒要吃什么药？也就有了回答。</p>
+<p>优化可以在question_classifier.py的check_medical函数里增加全局变量：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">global diseases_dict</span><br><span class="line">if final_dict:</span><br><span class="line">    diseases_dict = final_dict</span><br></pre></td></tr></table></figure>
+
+<p>并在classify函数中加入以下代码自动判断实体：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">if not medical_dict:</span><br><span class="line">    if &#x27;diseases_dict&#x27; in globals():    # 判断是否是首次提问，若首次提问，则diseases_dict无值</span><br><span class="line">        medical_dict = diseases_dict</span><br><span class="line">    else:</span><br><span class="line">        return &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="属性增加"><a href="#属性增加" class="headerlink" title="属性增加"></a>属性增加</h4><p>该项目的一个瑕疵是属性划分，属性划分不够细致，可以通过精细属性划分来进行优化，比如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">用户：感冒发烧流鼻涕可以吃什么药？</span><br><span class="line">性感小高，在线解惑：感冒灵，板蓝根，双黄连口服液·······</span><br><span class="line">用户：感冒发烧流鼻涕可以吃什么药？</span><br><span class="line">性感小高，在线解惑：感冒灵······</span><br></pre></td></tr></table></figure>
+
+<p>第二个回答要比第一个回答更精准，因为属性划分不细致的话就会返回符合少数属性的所有答案，当属性划分更精细后返回的答案会变少也更加精准。</p>
+<p>这里可以增加一个推荐食品的属性：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 推荐食品</span><br><span class="line">if self.check_words(self.food_qwds, question) and &#x27;disease&#x27; in types:</span><br><span class="line">    deny_status = self.check_words(self.deny_words, question)</span><br><span class="line">    if deny_status:</span><br><span class="line">        question_type = &#x27;disease_not_food&#x27;</span><br><span class="line">    else:</span><br><span class="line">        question_type = &#x27;disease_do_food&#x27;</span><br><span class="line">    if self.check_words([&#x27;能吃&#x27;,&#x27;能喝&#x27;,&#x27;可以吃&#x27;,&#x27;可以喝&#x27;], question):</span><br><span class="line">        question_types.append(&#x27;disease_can_eat&#x27;)</span><br><span class="line">    print(question_type)</span><br><span class="line">    question_types.append(question_type)</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>出于能力和时间问题到此为止，对这种项目的创建感觉更依赖于数据是否完善，而且该项目还是一个封闭项目(问题答案有限)，可以直接查找数据即可，但信息查询和返回时可以对进行优化，比如优化算法使其对回答结果更加精准。另外个人猜测如果非封闭项目能够做到与搜索引擎结合是不是就可以大幅度提高答案的准确率与可回答问题的数量？</p>
 
       
 
@@ -309,7 +453,7 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">操作系统</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">python</a>
         		</li>
       		
 		</ul>
@@ -365,7 +509,7 @@
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -379,18 +523,9 @@
   
 <nav id="article-nav">
   
-    <a href="/2021/06/05/%E6%90%9C%E7%B4%A2%E5%AD%A6%E4%B9%A0/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          搜索学习
-        
-      </div>
-    </a>
   
-  
-    <a href="/2021/06/05/%E4%B8%80%E4%BA%9B%E4%B8%8E%E5%87%BD%E6%95%B0%E6%9C%89%E5%85%B3%E7%9A%84%E6%BA%A2%E5%87%BA%E9%97%AE%E9%A2%98/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">一些函数溢出问题</div>
+    <a href="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">栈溢出类漏洞前置基础知识</div>
       <i class="icon-circle-right"></i>
     </a>
   
