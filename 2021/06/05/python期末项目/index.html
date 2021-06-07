@@ -22,7 +22,7 @@
 <meta property="og:image" content="http://example.com/cach/image-20210606135433423.png">
 <meta property="og:image" content="http://example.com/cach/image-20210606134630905.png">
 <meta property="article:published_time" content="2021-06-05T13:41:01.000Z">
-<meta property="article:modified_time" content="2021-06-06T11:39:33.113Z">
+<meta property="article:modified_time" content="2021-06-07T11:06:16.899Z">
 <meta property="article:author" content="mkx7">
 <meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
@@ -86,10 +86,10 @@
         	    
 
 		<nav>
-    			总文章数 10
+    			总文章数 11
 		</nav>
 		<nav>
-			总字数 <span class="post-count">30.0k</span>
+			总字数 <span class="post-count">30.1k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -208,7 +208,7 @@
         
       </header>
       <div align="center" class="post-count">
-          字数：2,506字 | 预计阅读时长：9分钟
+          字数：2,585字 | 预计阅读时长：10分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
@@ -233,8 +233,8 @@
 <p>ps：导入时间较长，大约几个小时</p>
 <p>完成后neo4j服务不要关闭，再运行chatbot_graph.py即可正常运行：</p>
 <p><img src="../../../../cach/image-20210606121917658.png" alt="image-20210606121917658"></p>
-<h2 id="项目实现"><a href="#项目实现" class="headerlink" title="项目实现"></a>项目实现</h2><p>以上是直接使用刘老师写好的文件，之后分析下该项目如何实现的。</p>
-<h3 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h3><p>该项目是一个以医学为中心的医药领域问答系统，包含7类数量为4.4万的知识实体，10类数量为30万实体关系的知识图谱，根据知识图谱完成自动问答与分析服务。</p>
+<h2 id="项目实现"><a href="#项目实现" class="headerlink" title="项目实现"></a>项目实现</h2><p>以上是直接使用刘老师写好的文件，之后分析下时该项目如何实现的。</p>
+<h3 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h3><p>本项目是一个以医学为中心的医药领域问答系统，主要包括两部分数据整理与问答系统，获取数据使用爬虫，储存数据使用Neo4j，数据操作采用neo4j的cypher查询语言，以结构化数据为主构建以医药为中心的医疗知识图谱，包含7类数量为4.4万的知识实体，11类数量为30万实体关系的知识图谱，问答系统基于规则匹配实现，根据知识图谱完成自动问答与分析服务。</p>
 <p>实现重点在于实现基于垂直网站数据的医药知识图谱构建和基于医药知识图谱的自动问答。</p>
 <p>7类知识实体：</p>
 <table>
@@ -523,6 +523,15 @@
   
 <nav id="article-nav">
   
+    <a href="/2021/06/07/AFL%E5%AD%A6%E4%B9%A0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          AFL学习
+        
+      </div>
+    </a>
+  
   
     <a href="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" id="article-nav-older" class="article-nav-link-wrap">
       <div class="article-nav-title">栈溢出类漏洞前置基础知识</div>
@@ -655,6 +664,10 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">fuzz</a>
+              </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">pwn</a>
