@@ -8,16 +8,23 @@
   <link rel="dns-prefetch" href="http://example.com">
   <title>AFL学习 | mkx7&#39;blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="article">
+  <meta name="description" content="AFL是fuzz工具中入门常见的工具，本文先介绍下AFL的使用再分析AFL的工作原理最后学习fuzz。 AFL的使用因为AFL是之前就安装好了但一直拖到现在才学就省略了安装过程，检验AFL是否安装完成：  afl的各种命令：  下面是一些命令的功能介绍，不全以后看到再补充： afl-gcc 和afl-g++分别对应gcc和g++的封装afl-clang 和afl-clang++分别对应clan">
+<meta property="og:type" content="article">
 <meta property="og:title" content="AFL学习">
 <meta property="og:url" content="http://example.com/2021/06/07/AFL%E5%AD%A6%E4%B9%A0/index.html">
 <meta property="og:site_name" content="mkx7&#39;blog">
+<meta property="og:description" content="AFL是fuzz工具中入门常见的工具，本文先介绍下AFL的使用再分析AFL的工作原理最后学习fuzz。 AFL的使用因为AFL是之前就安装好了但一直拖到现在才学就省略了安装过程，检验AFL是否安装完成：  afl的各种命令：  下面是一些命令的功能介绍，不全以后看到再补充： afl-gcc 和afl-g++分别对应gcc和g++的封装afl-clang 和afl-clang++分别对应clan">
 <meta property="og:locale">
+<meta property="og:image" content="http://example.com/cach/image-20210607203614259.png">
+<meta property="og:image" content="http://example.com/cach/image-20210607203827910.png">
+<meta property="og:image" content="http://example.com/cach/image-20210607204643757.png">
+<meta property="og:image" content="http://example.com/cach/image-20210607204837410.png">
 <meta property="article:published_time" content="2021-06-07T12:08:26.000Z">
-<meta property="article:modified_time" content="2021-06-07T12:08:59.601Z">
+<meta property="article:modified_time" content="2021-06-07T13:19:06.491Z">
 <meta property="article:author" content="mkx7">
 <meta property="article:tag" content="fuzz">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/cach/image-20210607203614259.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -77,10 +84,10 @@
         	    
 
 		<nav>
-    			总文章数 11
+    			总文章数 13
 		</nav>
 		<nav>
-			总字数 <span class="post-count">30.1k</span>
+			总字数 <span class="post-count">37.1k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -199,12 +206,30 @@
         
       </header>
       <div align="center" class="post-count">
-          字数：0字 | 预计阅读时长：1分钟
+          字数：365字 | 预计阅读时长：1分钟
       </div>
     
     <div class="article-entry" itemprop="articleBody">
       
         <span id="more"></span>
+
+<p>AFL是fuzz工具中入门常见的工具，本文先介绍下AFL的使用再分析AFL的工作原理最后学习fuzz。</p>
+<h2 id="AFL的使用"><a href="#AFL的使用" class="headerlink" title="AFL的使用"></a>AFL的使用</h2><p>因为AFL是之前就安装好了但一直拖到现在才学就省略了安装过程，检验AFL是否安装完成：</p>
+<p><img src="../../../../cach/image-20210607203614259.png" alt="image-20210607203614259"></p>
+<p>afl的各种命令：</p>
+<p><img src="../../../../cach/image-20210607203827910.png" alt="image-20210607203827910"></p>
+<p>下面是一些命令的功能介绍，不全以后看到再补充：</p>
+<p>afl-gcc 和afl-g++分别对应gcc和g++的封装<br>afl-clang 和afl-clang++分别对应clang的c和c++编译器封装<br>afl-fuzz 是AFL 的主体，用于对目标程序进行fuzz<br>afl-analyze 可以对用例进行分析，通过分析给定的用例，看能否发现用例中有意义的字段。<br>afl-qemu-trace 用于qemu-mode，默认不安装，需要手工执行qemu-mode 的编译脚本进行编译，后面会介绍。<br>afl-plot 生成测试任务的状态图<br>afl-tmin 和afl-cmin 对用例进行简化<br>afl-whatsup 用于查看fuzz 任务的状态<br>afl-gotcpu 用于查看当前CPU 状态<br>afl-showmap 用于对单个用例进行执行路径跟踪<br>拿一个自身存在漏洞的程序插桩编译一下(编译时会报错，因为程序本身就带有漏洞)，后面测试编译后的程序(有源代码白盒测试)：</p>
+<p><img src="../../../../cach/image-20210607204643757.png" alt="image-20210607204643757"></p>
+<p><img src="../../../../cach/image-20210607204837410.png" alt="image-20210607204837410"></p>
+<p>ps：测试有makefile文件的项目时必须将CC和CXX加入环境变量：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> CC=afl-clang；<span class="built_in">export</span> CXX=afl-clang++；</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
 
 
       
@@ -309,6 +334,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2021/06/09/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BB%84%E6%88%90%E5%8E%9F%E7%90%86%E6%9C%9F%E6%9C%AB%E5%A4%8D%E4%B9%A0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          计算机组成原理期末复习
+        
+      </div>
+    </a>
   
   
     <a href="/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/" id="article-nav-older" class="article-nav-link-wrap">
@@ -444,11 +478,11 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color5">fuzz</a>
+                <a href="javascript:void(0)" class="js-tag color4">pwn</a>
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">pwn</a>
+                <a href="javascript:void(0)" class="js-tag color5">fuzz</a>
               </li>
              
               <li class="article-tag-list-item">
@@ -460,15 +494,15 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color3">漏洞</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">笔记</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">计算机组成</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color3">漏洞</a>
               </li>
             
             <div class="clearfix"></div>
