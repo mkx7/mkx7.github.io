@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2021-09-06T04:08:15.291Z</updated>
+  <updated>2021-09-06T04:14:31.942Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -17,33 +17,13 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>女儿</title>
-    <link href="http://example.com/2021/09/06/%E5%A5%B3%E5%84%BF/"/>
-    <id>http://example.com/2021/09/06/%E5%A5%B3%E5%84%BF/</id>
-    <published>2021-09-06T04:07:36.000Z</published>
-    <updated>2021-09-06T04:08:15.291Z</updated>
-    
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><span id="more"></span><p>我有个女儿姓高你猜猜她是谁？</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;link rel=&quot;stylesheet&quot; class=&quot;aplayer-secondary-style-marker&quot; href=&quot;\assets\css\APlayer.min.css&quot;&gt;&lt;script src=&quot;\assets\js\APlayer.min.js&quot; cla</summary>
-      
-    
-    
-    
-    
-  </entry>
-  
-  <entry>
     <title>ceshi</title>
     <link href="http://example.com/2021/09/06/ceshi/"/>
     <id>http://example.com/2021/09/06/ceshi/</id>
     <published>2021-09-06T02:03:43.000Z</published>
-    <updated>2021-09-06T03:58:26.917Z</updated>
+    <updated>2021-09-06T04:14:31.942Z</updated>
     
-    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><span id="more"></span><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![1.png](./ceshi/1.png)</span><br></pre></td></tr></table></figure><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[外链图片转存失败(img-r090Oqni-1562139318371)(ceshi/1.png)]</span><br></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<link rel="stylesheet" class="aplayer-secondary-style-marker" href="\assets\css\APlayer.min.css"><script src="\assets\js\APlayer.min.js" class="aplayer-secondary-script-marker"></script><span id="more"></span><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% asset_img <span class="number">1.</span>png This is an test image %&#125;</span><br></pre></td></tr></table></figure>]]></content>
     
     
       
