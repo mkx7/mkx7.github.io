@@ -82,10 +82,10 @@
         	    
 
 		<nav>
-    			总文章数 12
+    			总文章数 13
 		</nav>
 		<nav>
-			总字数 <span class="post-count">34.0k</span>
+			总字数 <span class="post-count">34.1k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -213,9 +213,9 @@
 <span id="more"></span>
 
 <h2 id="IO-FILE结构"><a href="#IO-FILE结构" class="headerlink" title="IO_FILE结构"></a>IO_FILE结构</h2><p>当Linux系统上的程序运行时会使用fopen函数创建FILE结构将其分配在堆中对文件进行处理，FILE是Linux系统标准IO库中专门用于描述文件结构的文件流，它是结构体会记录与文件操作有关的相关变量，每个要处理的文件本质上就是一个FILE，有3个文件流是程序启动时就自动准备好的，分别是stdin、stdout、stderr，此外所有FILE文件流又通过_chain链接成一条链表，表头通过_IO_list_all(libc全局变量，在符号表中可通过pwntools找到)指向(一般它指向IO_2_1_stderr)，通过_IO_list_all就可以控制所有的FILE文件流，这里可以看一张大佬的图片方便理解：</p>
-<p><img src="assets%5Cimg%5Cimage1.png" alt="image-20210527174147620"></p>
+<p><img src="/2021/06/05/IO-FILE/assets%5Cimg%5Cimage1.png" alt="image-20210527174147620"></p>
 <p>下面具体说一下，先看一张图：</p>
-<p><img src="%5Cassets%5Cimg%5Cimage2.png" alt="image-20210527160050312"></p>
+<p><img src="/2021/06/05/IO-FILE/%5Cassets%5Cimg%5Cimage2.png" alt="image-20210527160050312"></p>
 <p>首先看一下_IO_FILE_plus，它是一个结构体，当打开一个文件时都会从堆上分配内存来存放它：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">struct _IO_FILE_plus</span><br><span class="line">&#123;</span><br><span class="line">  _IO_FILE file;</span><br><span class="line">  const struct _IO_jump_t *vtable;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 

@@ -15,18 +15,18 @@
 <meta property="og:site_name" content="mkx7&#39;blog">
 <meta property="og:description" content="栈溢出类漏洞前置基础知识。">
 <meta property="og:locale">
-<meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213132407552.png">
-<meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213133003287.png">
-<meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213093352964.png">
-<meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213144023640.png">
-<meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213171405028.png">
-<meta property="og:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213173313928.png">
+<meta property="og:image" content="http://example.com/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213132407552.png">
+<meta property="og:image" content="http://example.com/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213133003287.png">
+<meta property="og:image" content="http://example.com/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213093352964.png">
+<meta property="og:image" content="http://example.com/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213144023640.png">
+<meta property="og:image" content="http://example.com/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213171405028.png">
+<meta property="og:image" content="http://example.com/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213173313928.png">
 <meta property="article:published_time" content="2021-06-05T12:44:03.000Z">
 <meta property="article:modified_time" content="2021-06-05T12:48:49.200Z">
 <meta property="article:author" content="mkx7">
 <meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="c:/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213132407552.png">
+<meta name="twitter:image" content="http://example.com/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users/Lenovo/AppData/Roaming/Typora/typora-user-images/image-20210213132407552.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -86,10 +86,10 @@
         	    
 
 		<nav>
-    			总文章数 12
+    			总文章数 13
 		</nav>
 		<nav>
-			总字数 <span class="post-count">34.0k</span>
+			总字数 <span class="post-count">34.1k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -218,8 +218,8 @@
 
 <h1 id="溢出类漏洞基础前置知识："><a href="#溢出类漏洞基础前置知识：" class="headerlink" title="溢出类漏洞基础前置知识："></a>溢出类漏洞基础前置知识：</h1><h2 id="计算机系统中各段："><a href="#计算机系统中各段：" class="headerlink" title="计算机系统中各段："></a>计算机系统中各段：</h2><p>早期的计算机中程序都是直接运行在物理内存上的，运行时访问的地址都是物理地址，这要求程序使用的内存空间不超过物理内存的大小。现代计算机操作系统中为了提高CPU的利用率计算机同时运行多个程序，并将计算机上有限的物理内存分配给多个程序使用，做到隔离各个程序的地址空间和提高内存利用率，操作系统应用虚拟内存机制来管理内存。简单来说现代计算机如果要运行一个程序，程序需要在虚拟内存中加载运行，这一部分简单介绍操作系统的虚拟内存空间中的各段布局和作用。要详细理解虚拟内存可参考《深入理解计算机系统》、《程序员的自我修养-链接装载库》、linux的虚拟内存可参考《linux二进制分析》。</p>
 <p>计算机系统虚拟内存中各段布局简略图：堆空间和数据段之间还有一个bss段以及其他部分，此图为简略图。</p>
-<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213132407552.png" alt="image-20210213132407552"></p>
-<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213133003287.png" alt="image-20210213133003287"></p>
+<p><img src="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213132407552.png" alt="image-20210213132407552"></p>
+<p><img src="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213133003287.png" alt="image-20210213133003287"></p>
 <p>关于虚拟内存这一块细讲东西太多，这里只记录与溢出有关的bss段、data段、text段、heap段、stack段的基本介绍：</p>
 <h3 id="bss段："><a href="#bss段：" class="headerlink" title="bss段："></a>bss段：</h3><p>bss段通常是指用来存放程序中未初始化的全局变量的一块内存区域，也存放初始化但数据为0的全局变量，是英文Block Started by Symbol的简称。bss段属于静态内存分配。 </p>
 <h3 id="data段："><a href="#data段：" class="headerlink" title="data段："></a>data段：</h3><p>data段通常是指用来存放程序中已初始化的全局变量的一块内存区域。属于静态内存分配。 </p>
@@ -239,7 +239,7 @@
 <p>栈中包括栈帧，在调用一个函数时会建立一个新的栈帧，每个栈帧的建立和使用后处理的方式取决于操作系统和编译器。可以看做单一的栈帧对应函数调用时某个单一函数，而栈段不止用于单一的某个程序而是计算机系统中所以程序的共用部分，在研究栈溢出中我们一般通过某个栈帧来使用栈溢出。</p>
 <h4 id="栈帧："><a href="#栈帧：" class="headerlink" title="栈帧："></a>栈帧：</h4><p>栈帧，也就是stack frame，是一种栈结构也是stack段的一部分，栈帧专门用于保存函数调用过程中的各种信息(参数，返回地址，本地变量等)。栈帧有栈顶和栈底之分，其中栈顶的地址最低，栈底的地址最高，SP(栈指针)一直指向栈顶的。BP(帧指针)也就是基址指针一直指向栈底。EP和BP一起创建和使用一个栈帧。</p>
 <p>栈帧结构图：</p>
-<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213093352964.png" alt="image-20210213093352964"></p>
+<p><img src="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213093352964.png" alt="image-20210213093352964"></p>
 <p>如上，栈顶在上，地址空间从上向下生长。ESP相当于栈顶，EBP相当于栈底，如果被调用函数可以使用EAX、EBX等寄存器，而调用函数中这些寄存器的值此时还没有使用完，则栈此时还要保存EAX、EBX等寄存器的值。</p>
 <h3 id="参数传递："><a href="#参数传递：" class="headerlink" title="参数传递："></a>参数传递：</h3><h4 id="系统函数（内核接口）："><a href="#系统函数（内核接口）：" class="headerlink" title="系统函数（内核接口）："></a>系统函数（内核接口）：</h4><h5 id="1、x86架构32位系统调用："><a href="#1、x86架构32位系统调用：" class="headerlink" title="1、x86架构32位系统调用："></a>1、x86架构32位系统调用：</h5><p>使用寄存器传递参数，eax为syscall_number(系统函数编号)，ebx、ecx、edx、edi、esi、ebp用于将6个参数传递给系统调用。返回值保存在eax中。</p>
 <h5 id="2、x86架构64位系统调用"><a href="#2、x86架构64位系统调用" class="headerlink" title="2、x86架构64位系统调用"></a>2、x86架构64位系统调用</h5><p>使用寄存器传递参数，不直接从栈中传递任何参数，eax仍为syscall_number，使用的寄存器有rdi、rsi、rdx、r10、r8、r9.系统调用通过syscall指令完成。返回值，系统调用的结果存放在eax中。</p>
@@ -284,12 +284,12 @@
 <p>plt表中的每一项的数据内容都对应的got表中的地址，plt表中的数据根本不是函数的真实地址，而是got表项的地址。在进入带有@plt标志的函数时，这个函数其实就是个过渡作用，因为got表项中的数据才是函数最终的地址，而plt表中的数据又是got表项的地址，我们就可以通过plt表跳转到got表来得到函数真正的地址。</p>
 <p>在一个程序调用函数时，会先跳转到被调用函数的plt表处，如果该函数已经被调用过，则plt表保存的为该函数的真实内存地址，根据真实内存地址即可去调用该函数，而如果该函数未被调用过，如第一次调用scanf函数，则此时跳转流程为call scanf —&gt; scanf的plt表 —&gt;scanf的got表，在got表中能够找到scanf函数的真实内存地址供程序加载运行。</p>
 <p>简单来说可看做：</p>
-<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213144023640.png" alt="image-20210213144023640"></p>
+<p><img src="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213144023640.png" alt="image-20210213144023640"></p>
 <p>plt表和got表的对应：</p>
-<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213171405028.png" alt="image-20210213171405028"></p>
+<p><img src="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213171405028.png" alt="image-20210213171405028"></p>
 <p>除了plt[0]、got[0]、got[1]、got[2]有特殊作用，作用全部的plt表和got表，plt[0]是一个函数，这个函数的作用是通过got[1]和got[2]来正确绑定一个函数的正式地址到对应的got表中来。剩下的如上图一一对应，被调用的函数存放在除plt[0]外的plt表其他表项中。</p>
 <p>函数详细调用过程：</p>
-<p><img src="C:\Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213173313928.png" alt="image-20210213173313928"></p>
+<p><img src="/2021/06/05/%E6%A0%88%E6%BA%A2%E5%87%BA%E7%B1%BB%E6%BC%8F%E6%B4%9E%E5%89%8D%E7%BD%AE%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/Users\Lenovo\AppData\Roaming\Typora\typora-user-images\image-20210213173313928.png" alt="image-20210213173313928"></p>
 <p>如图，程序调用puts函数，puts函数在glibc动态库中，编译和链接阶段链接器并不知道puts函数的加载地址也就无法向got表中填入，所以要等到进程真正运行后才能确定puts函数的地址，此时来重定位。首先函数调用还是需要进入plt表中，然后通过plt进入got表中，此时因为puts函数在该程序中还是第一次被调用并没有保存puts函数在内存中的真正地址，所以还需要通过plt表向got表写入puts函数在内存中的真实地址。此时got表中保存的还是plt中的地址(因为还需要plt表向got表中写入puts函数在内存中的真实地址)，通过got表跳转到plt表，将调用函数的id压栈，再跳转到plt表项，此时回到的plt表应该是plt[0]再进入got表，此时进入的got表应该是got[0]、got[1]然后_dl_runtime_resolve对被调用函数进行解析和重定位，最后将被调用函数的真实地址写进got表，执行完被调用函数后返回调用函数。此后再调用puts函数直接进入plt表即可。</p>
 <p>ps：dynamic段：提供动态链接的信息，例如动态链接中各个表的位置。link_map：已加载库的链表，由动态库函数的地址构成的链表。_dl_runtime_resolve：在第一次运行时进行地址解析和重定位。</p>
 

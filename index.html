@@ -74,10 +74,10 @@
         	    
 
 		<nav>
-    			总文章数 12
+    			总文章数 13
 		</nav>
 		<nav>
-			总字数 <span class="post-count">34.0k</span>
+			总字数 <span class="post-count">34.1k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -172,6 +172,77 @@
           </div>
           <div id="js-content" class="content-ll">
             
+  
+    <article id="post-ceshi" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/09/06/ceshi/">ceshi</a>
+    </h1>
+  
+
+        
+        
+<a href="/2021/09/06/ceshi/" class="archive-article-date">
+  	<time datetime="2021-09-06T01:42:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-06</time>
+</a>
+
+        
+      </header>
+      <div align="center" class="post-count">
+          字数：13字 | 预计阅读时长：1分钟
+      </div>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![你想输入的替代文字](ceshi/1.jpg)</span><br></pre></td></tr></table></figure>
+
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2021/09/06/ceshi/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
   
     <article id="post-计算机组成原理期末复习" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
@@ -283,13 +354,13 @@
 
 <p>AFL是fuzz工具中入门常见的工具，本文先介绍下AFL的使用再分析AFL的工作原理最后学习fuzz。</p>
 <h2 id="AFL的使用"><a href="#AFL的使用" class="headerlink" title="AFL的使用"></a>AFL的使用</h2><p>因为AFL是之前就安装好了但一直拖到现在才学就省略了安装过程，检验AFL是否安装完成：</p>
-<p><img src="../../../../cach/image-20210607203614259.png" alt="image-20210607203614259"></p>
+<p><img src="/2021/06/07/AFL%E5%AD%A6%E4%B9%A0/../../../cach/image-20210607203614259.png" alt="image-20210607203614259"></p>
 <p>afl的各种命令：</p>
-<p><img src="../../../../cach/image-20210607203827910.png" alt="image-20210607203827910"></p>
+<p><img src="/2021/06/07/AFL%E5%AD%A6%E4%B9%A0/../../../cach/image-20210607203827910.png" alt="image-20210607203827910"></p>
 <p>下面是一些命令的功能介绍，不全以后看到再补充：</p>
 <p>afl-gcc 和afl-g++分别对应gcc和g++的封装<br>afl-clang 和afl-clang++分别对应clang的c和c++编译器封装<br>afl-fuzz 是AFL 的主体，用于对目标程序进行fuzz<br>afl-analyze 可以对用例进行分析，通过分析给定的用例，看能否发现用例中有意义的字段。<br>afl-qemu-trace 用于qemu-mode，默认不安装，需要手工执行qemu-mode 的编译脚本进行编译，后面会介绍。<br>afl-plot 生成测试任务的状态图<br>afl-tmin 和afl-cmin 对用例进行简化<br>afl-whatsup 用于查看fuzz 任务的状态<br>afl-gotcpu 用于查看当前CPU 状态<br>afl-showmap 用于对单个用例进行执行路径跟踪<br>拿一个自身存在漏洞的程序插桩编译一下(编译时会报错，因为程序本身就带有漏洞)，后面测试编译后的程序(有源代码白盒测试)：</p>
-<p><img src="../../../../cach/image-20210607204643757.png" alt="image-20210607204643757"></p>
-<p><img src="../../../../cach/image-20210607204837410.png" alt="image-20210607204837410"></p>
+<p><img src="/2021/06/07/AFL%E5%AD%A6%E4%B9%A0/../../../cach/image-20210607204643757.png" alt="image-20210607204643757"></p>
+<p><img src="/2021/06/07/AFL%E5%AD%A6%E4%B9%A0/../../../cach/image-20210607204837410.png" alt="image-20210607204837410"></p>
 <p>ps：测试有makefile文件的项目时必须将CC和CXX加入环境变量：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> CC=afl-clang；<span class="built_in">export</span> CXX=afl-clang++；</span><br></pre></td></tr></table></figure>
 
@@ -890,87 +961,6 @@
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-Linux系统启动流程" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">Linux系统启动流程</a>
-    </h1>
-  
-
-        
-        
-<a href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:31:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        
-      </header>
-      <div align="center" class="post-count">
-          字数：1,233字 | 预计阅读时长：5分钟
-      </div>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>记录的Linux系统从通电到操作系统启动流程</p>
-        
-          <a class="article-more-a" href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/#more">more >></a>
-        
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">操作系统</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">展开全文 >></a>
         </p>
       
 

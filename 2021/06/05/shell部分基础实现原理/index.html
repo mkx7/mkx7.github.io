@@ -15,21 +15,21 @@
 <meta property="og:site_name" content="mkx7&#39;blog">
 <meta property="og:description" content="记录shell是如何实现的，实例以后有时间补上。">
 <meta property="og:locale">
-<meta property="og:image" content="d:/cach/image-20210602175714379.png">
-<meta property="og:image" content="d:/cach/image-20210602180030411.png">
-<meta property="og:image" content="d:/cach/image-20210602180050035.png">
-<meta property="og:image" content="d:/cach/image-20210602172642883.png">
-<meta property="og:image" content="d:/cach/cat.png">
-<meta property="og:image" content="d:/cach/fd_offset.png">
-<meta property="og:image" content="d:/cach/output.png">
-<meta property="og:image" content="d:/cach/dup.png">
-<meta property="og:image" content="d:/cach/pipe.png">
+<meta property="og:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/image-20210602175714379.png">
+<meta property="og:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/image-20210602180030411.png">
+<meta property="og:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/image-20210602180050035.png">
+<meta property="og:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/image-20210602172642883.png">
+<meta property="og:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/cat.png">
+<meta property="og:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/fd_offset.png">
+<meta property="og:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/output.png">
+<meta property="og:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/dup.png">
+<meta property="og:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/pipe.png">
 <meta property="article:published_time" content="2021-06-05T12:33:45.000Z">
 <meta property="article:modified_time" content="2021-06-05T12:47:29.058Z">
 <meta property="article:author" content="mkx7">
 <meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="d:/cach/image-20210602175714379.png">
+<meta name="twitter:image" content="http://example.com/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/image-20210602175714379.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -89,10 +89,10 @@
         	    
 
 		<nav>
-    			总文章数 12
+    			总文章数 13
 		</nav>
 		<nav>
-			总字数 <span class="post-count">34.0k</span>
+			总字数 <span class="post-count">34.1k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -222,14 +222,14 @@
 <h3 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h3><p>​        操作系统为了保证系统安全限制了不同程序间的访问权限，比如为了防止一些程序非法使用其他程序的内存数据，不正确的使用计算机底层资源而对计算机造成破坏，划分了2个权限等级用户态和内核态。</p>
 <p>​        一般用户使用的程序如浏览器，播放器等程序运行在用户态，内核程序运行在内核态，可以访问内存的所有数据，包括计算机的外围设备，如硬盘网卡，用户态的用户态程序只能受限的访问内存，不允许使用计算机的底层资源，如硬盘网卡等，但有时用户态需要使用一些计算机的底层资源，如使用IO设备获取或输出数据，从外设如硬盘中获取数据，为了能够使用户态程序能够完成上述目的又产生了一个机制，即系统调用，通过从用户态使用系统调用进入内核态，根据不同的系统调用完成特定的目的。</p>
 <p>​        除了系统调用能够从用户态进入内核态外还有异常和外设中断也能完成从用户态进入内核态的目的，如果说系统调用是人为可控的从用户态切换到内核态，如用户态程序可以使用fork()函数创建子线程，其实就是通过调用sys_fork系统调用切换到内核态完成子线程创建(fork()调用sys_fork系统调用具体实现没有探究过，猜测应该是类似于函数的封装)，那么异常和外设中断则是不可控的，完全由硬件负责的，比如异常即是用户态程序在执行程序时发生了错误，此时的用户态不足以对错误进行处理就需要进入内核态对错误进行处理，此时就需要中断来对异常进行处理(值得一提的是中断也是程序并发中重要的一部分，但和这里不同)，如程序中出现整数除0就是异常。另外中断又分为内中断与外中断，区别在于中断的信号来源于哪里，详细介绍的话系统调用、异常和外设中断都可以独立用一篇笔记记录，这里用一张图省略中断吧：</p>
-<p><img src="D:/cach/image-20210602175714379.png" alt="image-20210602175714379"></p>
+<p><img src="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/image-20210602175714379.png" alt="image-20210602175714379"></p>
 <p>​        从上图中可以发现异常其实就是属于内中断，最后的外设中断属于外中断，虽然其实都是中断但因为中断信号来源不同将其分为两部分，再说一下外设中断，上图的I/O操作完成发生中断信号即是典型的外中断例子，解释的话就是外设在用户态程序正常运行时如果相应的硬件完成了用户的请求会向CPU发出中断信号，使其暂停用户态程序去处理外设，而要使用外设自然要进入内核态，也能完成用户态与内核态的切换。</p>
 <p>​        下面放几张图便于理解：</p>
-<p><img src="D:/cach/image-20210602180030411.png" alt="image-20210602180030411"></p>
-<p><img src="D:/cach/image-20210602180050035.png" alt="image-20210602180050035"></p>
+<p><img src="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/image-20210602180030411.png" alt="image-20210602180030411"></p>
+<p><img src="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/image-20210602180050035.png" alt="image-20210602180050035"></p>
 <p>​        最后前面3者的区别说了再说一下相同点，其实3者最后都是使用的中断。</p>
 <p>​        笔者已知的能够通过系统调用调用计算机底层资源的方法除了库函数外还有shell，终于来到了本文的主题shell：</p>
-<p><img src="D:/cach/image-20210602172642883.png" alt="image-20210602172642883"></p>
+<p><img src="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/image-20210602172642883.png" alt="image-20210602172642883"></p>
 <p>​        shell其实是一个特殊的程序，之所以说它特殊是因为它并不在内核态，仍然处于用户态，但它却可以使用内核态的资源，因为它的命令与库函数一样封装了系统调用，在shell中直接使用命令条即可使用各种系统调用，类似应用程序与硬件间的操作系统，一般一个shell即是一个终端，终端是一个硬件设备。</p>
 <p>​        一个shell的基础主要有进程、内存、文件描述符、管道、文件系统等，下面对其进行介绍。</p>
 <h3 id="进程和内存"><a href="#进程和内存" class="headerlink" title="进程和内存"></a>进程和内存</h3><p>Unix中的进程由内核管理的进程状态信息(PCB)、数据段和指令段组成。</p>
@@ -246,17 +246,17 @@
 <h3 id="I-O和文件描述符"><a href="#I-O和文件描述符" class="headerlink" title="I/O和文件描述符"></a><strong>I/O和文件描述符</strong></h3><p>unix中所有可以进行I/O操作的进程都可以当作“文件”，每个进程使用一个文件描述符来对其进行访问，包括打开文件、目录、设备、创建一个管道，都可以看作字节流来访问。</p>
 <p>shell默认会一直打开3个文件描述符：0(stdin),  1(stdout),  2(stderr)。文件描述符其实就是一个与访问对象绑定的整数，从0开始依次加1；新分配的文件描述符总是当前进程未被使用的最小描述符。</p>
 <p>通过文件描述符和fork可以实现shell中的I/O重定向，fork出来的子进程与父进程共享文件描述符表，父进程之前打开的文件，子进程都可以直接去访问。exec虽然会替换掉当前进程空间，但是它会将文件描述符表保存下来，所以shell可以通过“fork+打开重定向的文件+exec”来实现I/O重定向。下面是 cat &lt; input.txt 的例子，cat默认会从0描述符中读，往1描述符中写：</p>
-<p><img src="D:/cach/cat.png" alt="cat.png"></p>
+<p><img src="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/cat.png" alt="cat.png"></p>
 <p>close(0)关闭0描述符</p>
 <p>open打开需要重定向的文件，返回当前可用的最小描述符即0，因此0描述符便和input.txt文件绑定</p>
 <p>exec(“cat”,argv)执行cat命令，由于exec会将文件描述表保存下来，因此cat会从0描述符读取，就相当于从input.txt文件中读取，然后往1(stdout)描述符中写，从而实现读取重定向</p>
 <p>输出重定向类似读取重定向，通过close(1)和open()，将重定向文件与1描述符绑定</p>
 <p>需要注意fork会在父子进程间共享文件描述符表，但是一旦某一方对其进行修改了则会copy一份(相当于初始内存相同，之后数据分开保存)，然而文件偏移则是一直共享的，即一方写完后另一方再写则是连续下去写的，看下面一个例子：</p>
-<p><img src="D:/cach/fd_offset.png" alt="fd_offset">    输出结果： <img src="D:/cach/output.png" alt="output"></p>
+<p><img src="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/fd_offset.png" alt="fd_offset">    输出结果： <img src="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/output.png" alt="output"></p>
 <p>除了fork是会共享文件偏移的，dup系统调用复制的一个新文件描述符也与原描述符共享文件偏移（dup返回的描述符也是当前可用的最小描述符）：</p>
-<p><img src="D:/cach/dup.png" alt="dup">输出结果也是：hello world</p>
+<p><img src="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/dup.png" alt="dup">输出结果也是：hello world</p>
 <h3 id="管道Pipes"><a href="#管道Pipes" class="headerlink" title="管道Pipes"></a><strong>管道Pipes</strong></h3><p>管道是一段内核缓冲区，使用一对文件描述符对其进行操作，即一个写一个读，可用于进程间通信，下面看一个例子：</p>
-<p><img src="D:/cach/pipe.png" alt="pipe"></p>
+<p><img src="/2021/06/05/shell%E9%83%A8%E5%88%86%E5%9F%BA%E7%A1%80%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86/cach/pipe.png" alt="pipe"></p>
 <p>通过pipe系统调用创建一个管道，并将其读写文件描述符保存在 数组p中（p[0]：read，p[1]：write）</p>
 <p>通过fork创建子进程，父子进程共享p[0]和p[1]</p>
 <p>子进程：通过dup将p[0]绑定，即与0(stdin)绑定，之后执行/bin/wc程序时就会从p[0]描述符中读取输入</p>

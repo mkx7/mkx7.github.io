@@ -6,22 +6,15 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://example.com">
-  <title>Linux系统启动流程 | mkx7&#39;blog</title>
+  <title>Archives: 2021/9 | mkx7&#39;blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录的Linux系统从通电到操作系统启动流程">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Linux系统启动流程">
-<meta property="og:url" content="http://example.com/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="mkx7&#39;blog">
+<meta property="og:url" content="http://example.com/archives/2021/09/index.html">
 <meta property="og:site_name" content="mkx7&#39;blog">
-<meta property="og:description" content="记录的Linux系统从通电到操作系统启动流程">
 <meta property="og:locale">
-<meta property="og:image" content="http://example.com/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/cach/image-20210529110636068.png">
-<meta property="article:published_time" content="2021-06-05T12:31:49.000Z">
-<meta property="article:modified_time" content="2021-06-05T12:46:20.512Z">
 <meta property="article:author" content="mkx7">
-<meta property="article:tag" content="操作系统">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/cach/image-20210529110636068.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -178,217 +171,51 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Linux系统启动流程" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      Linux系统启动流程
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2021" class="archive-year">2021</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	
+<a href="/2021/09/06/ceshi/" class="archive-article-date">
+  	<time datetime="2021-09-06T01:42:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-09-06</time>
+</a>
+
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2021/09/06/ceshi/">ceshi</a>
     </h1>
   
 
-        
-        
-        <!-- 不蒜子统计 -->
-        <span id="busuanzi_container_page_pv" style='display:none' class="archive-article-date">
-              <i class="icon-smile icon"></i> 阅读数：<span id="busuanzi_value_page_pv"></span>次
-        </span>
+        <div class="article-info info-on-right">
+          
+          
 
-<a href="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" class="archive-article-date">
-  	<time datetime="2021-06-05T12:31:49.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2021-06-05</time>
-</a>
-
-        
-      </header>
-      <div align="center" class="post-count">
-          字数：1,233字 | 预计阅读时长：5分钟
-      </div>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>记录的Linux系统从通电到操作系统启动流程</p>
-<span id="more"></span>
-
-
-
-<h2 id="Linux系统启动"><a href="#Linux系统启动" class="headerlink" title="Linux系统启动"></a>Linux系统启动</h2><p>Linux启动流程：</p>
-<p><img src="/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/cach/image-20210529110636068.png" alt="image-20210529110636068"></p>
-<p>1.1</p>
-<p>BIOS即基本输入输出系统(basic input output system)，本质上是一个固化在主板ROM芯片(或者BIOS芯片)上的一个程序，负责基本输入输出、开机后自检和系统自启动，为计算机提供最底层的硬件设备控制，它包括了CPU的相关信息、设备启动顺序信息、硬盘信息、内存信息、时钟信息和PnP特性等。当计算机通电后不知道任何关于这台设备的信息，此时就会先加载BIOS放入内存中读取指令，再检查硬件设备、确定硬件完好后到启动设备中去搜索MBR。</p>
-<p>1.2</p>
-<p>MBR(Master Boot Record)是主引导程序，在硬盘上磁道的第一个扇区上，大小为512字节，存放预启动信息、分区表信息，当系统执行到MBR后将其中的Boot Loader(grub或Lilo)复制到物理内存0x7c00地址处开始执行指令。</p>
-<p>1.3</p>
-<p>Boot Loader(包括Grub、Lilo和spfdisk等)是操作系统内核运行前的一小段初始化程序，通过Boot Loader初始化硬件设备建立内存空间映射图，创造系统软硬件运行环境为调用操作系统内核做准备，之后Boot Loader读取分区表寻找操作系统。</p>
-<p>1.4</p>
-<p>配置好信息找到操作系统后根据grub设定的内核映像所在路径，系统读取内存映像并进行解压缩操作，此时屏幕一般会输出“Uncompressing Linux”的提示，当解压缩内核完成后屏幕输出“OK, booting the kernel”，同时系统会将解压后的内核放置在内存中，并调用start_kernel()函数来启动一系列的初始化函数并初始化各种设备，完成Linux核心环境的建立。至此，Linux内核已经建立起来了，基于Linux的程序应该可以正常运行了。</p>
-<p>1.5</p>
-<p>内核加载完后会启动Linux操作系统第一个守护进程init，通过该进程读取/etc/inittab文件，/etc/inittab文件会设定Linux的运行等级，Linux常见运行级别如下<br>0：关机模式<br>1：单用户模式<br>2：无网络支持的多用户模式<br>3：字符界面多用户模式<br>4：保留，未使用模式<br>5：图像界面多用户模式<br>6：重新引导系统，重启模式</p>
-<p>1.6</p>
-<p>读取完运行级别后Linux系统执行第一个用户层文件/etc/rc.d/rc.sysinit，该文件功能可以设定PATH运行变量、设定网络配置、启动swap分区、设定/proc、系统函数、配置Selinux等。</p>
-<p>1.7</p>
-<p>之后读取/etc/modules.conf文件及/etc/modules.d目录下的文件加载系统内核模块，内核模块可以添加或者修改及删除。</p>
-<p>1.8</p>
-<p>根据之前读取的运行级别，操作系统会运行rc0.d到rc6.d中相应的脚本程序来完成相应的初始化工作和启动相应的服务。</p>
-<p>1.9</p>
-<p>操作系统启动完相应服务后读取执行/etc/rc.d/rc.local文件，这一步可以将需要开机启动的任务加入到该文件末尾，系统会逐行去执行并启动相应命令，rc.local就是Linux在一切初始化工作后留给用户进行个性化的地方。</p>
-<p>1.10</p>
-<p>最后就是执行/bin/login程序启动到系统登录界面，操作系统等待用户输入用户名和密码登录到Shell终端，至此Linux操作系统完整流程启动完毕，此时系统已经进入到了等待用户输入username和password的时候了，你已经可以用自己的帐号登入系统了。</p>
-<h2 id="Linux启动级别"><a href="#Linux启动级别" class="headerlink" title="Linux启动级别"></a>Linux启动级别</h2><p>运行级别0：系统停机状态，系统默认运行级别不能设为0，否则不能正常启动<br>运行级别1：单用户工作状态，root权限，用于系统维护，禁止远程登陆<br>运行级别2：多用户状态(没有NFS)<br>运行级别3：完全的多用户状态(有NFS)，登陆后进入控制台命令行模式<br>运行级别4：系统未使用，保留<br>运行级别5：X11控制台，登陆后进入图形GUI模式<br>运行级别6：系统正常关闭并重启，默认运行级别不能设为6，否则不能正常启动</p>
-<h3 id="设置启动级别为3"><a href="#设置启动级别为3" class="headerlink" title="设置启动级别为3"></a>设置启动级别为3</h3><p>Linux系统默认启动等级为5、可已使用init命令切换启动级别。<br>[root@fly ~]# init 3</p>
-<h3 id="传统的设置方法"><a href="#传统的设置方法" class="headerlink" title="传统的设置方法"></a>传统的设置方法</h3><p>通过查看CentOS7的/etc/inittab文件</p>
-<h3 id="修改系统为多用户命令行界面"><a href="#修改系统为多用户命令行界面" class="headerlink" title="修改系统为多用户命令行界面"></a>修改系统为多用户命令行界面</h3><p>systemctl set-default multi-user.target</p>
-<h3 id="修改系统为图形界面"><a href="#修改系统为图形界面" class="headerlink" title="修改系统为图形界面"></a>修改系统为图形界面</h3><p>systemctl set-default graphical.target</p>
-
-      
-
-      
-        <div class="page-reward">
-          <a href="javascript:;" class="page-reward-btn tooltip-top">
-            <div class="tooltip tooltip-east">
-            <span class="tooltip-item">
-              赏
-            </span>
-            <span class="tooltip-content">
-              <span class="tooltip-text">
-                <span class="tooltip-inner">
-                  <p class="reward-p"><i class="icon icon-quo-left"></i>谢谢你请我吃糖果<i class="icon icon-quo-right"></i></p>
-                  <div class="reward-box">
-                    
-                    
-                  </div>
-                </span>
-              </span>
-            </span>
-          </div>
-          </a>
         </div>
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">操作系统</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
-        </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://example.com/2021/06/05/Linux%E7%B3%BB%E7%BB%9F%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Linux下aslr与pie
-        
-      </div>
-    </a>
   
   
-    <a href="/2021/06/05/2021Ciscn-wp/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">2021Ciscn_wp</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-  
-  
+    </div></section>
   
 
-  
-
-  
-
-  
+    
 
 
           </div>
@@ -421,8 +248,8 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,

@@ -15,19 +15,19 @@
 <meta property="og:site_name" content="mkx7&#39;blog">
 <meta property="og:description" content="aslr保护机制与pie保护机制的关系">
 <meta property="og:locale">
-<meta property="og:image" content="d:/cach/image-20210603162553526.png">
-<meta property="og:image" content="d:/cach/image-20210603162606021.png">
-<meta property="og:image" content="d:/cach/image-20210603163104032.png">
-<meta property="og:image" content="d:/cach/image-20210603163201647.png">
-<meta property="og:image" content="d:/cach/image-20210603170112481.png">
-<meta property="og:image" content="d:/cach/image-20210603170149284.png">
-<meta property="og:image" content="d:/cach/image-20210603173125093.png">
+<meta property="og:image" content="http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603162553526.png">
+<meta property="og:image" content="http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603162606021.png">
+<meta property="og:image" content="http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603163104032.png">
+<meta property="og:image" content="http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603163201647.png">
+<meta property="og:image" content="http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603170112481.png">
+<meta property="og:image" content="http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603170149284.png">
+<meta property="og:image" content="http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603173125093.png">
 <meta property="article:published_time" content="2021-06-05T12:32:15.000Z">
 <meta property="article:modified_time" content="2021-06-05T12:46:52.619Z">
 <meta property="article:author" content="mkx7">
 <meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="d:/cach/image-20210603162553526.png">
+<meta name="twitter:image" content="http://example.com/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603162553526.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -87,10 +87,10 @@
         	    
 
 		<nav>
-    			总文章数 12
+    			总文章数 13
 		</nav>
 		<nav>
-			总字数 <span class="post-count">34.0k</span>
+			总字数 <span class="post-count">34.1k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -228,20 +228,20 @@
 <h2 id="aslr与pie的配合使用"><a href="#aslr与pie的配合使用" class="headerlink" title="aslr与pie的配合使用"></a>aslr与pie的配合使用</h2><p>aslr和pie只开启一个都不足以进行绕过，而两者同时开启可以杜绝大部分针对缓冲区的信息泄露。</p>
 <p>之所以只开启aslr不足以防御缓冲区溢出是因为代码段、数据段等地址没有打乱，还是可以通过泄露其中的数据如plt、got表来获取libc进而得到可利用函数绕过aslr或其中的gadgets，而只开启了pie而没有开启aslr可以直接通过libc获取可利用的函数或gadgets，只有2者同时开启才可以完全避免信息泄露(pwn题中给泄漏点泄露不算)。</p>
 <p>下图是没开pie只开启了aslr的程序的内存地址对比：</p>
-<p><img src="D:/cach/image-20210603162553526.png" alt="image-20210603162553526"></p>
-<p><img src="D:/cach/image-20210603162606021.png" alt="image-20210603162606021"></p>
+<p><img src="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603162553526.png" alt="image-20210603162553526"></p>
+<p><img src="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603162606021.png" alt="image-20210603162606021"></p>
 <p>下图是开启了pie和aslr的程序的内存地址对比：</p>
-<p><img src="D:/cach/image-20210603163104032.png" alt="image-20210603163104032"></p>
-<p><img src="D:/cach/image-20210603163201647.png" alt="image-20210603163201647"></p>
+<p><img src="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603163104032.png" alt="image-20210603163104032"></p>
+<p><img src="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603163201647.png" alt="image-20210603163201647"></p>
 <p>下图是只开启了pie没开启aslr的程序的内存地址区别：</p>
-<p><img src="D:/cach/image-20210603170112481.png" alt="image-20210603170112481"></p>
-<p><img src="D:/cach/image-20210603170149284.png" alt="image-20210603170149284"></p>
+<p><img src="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603170112481.png" alt="image-20210603170112481"></p>
+<p><img src="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603170149284.png" alt="image-20210603170149284"></p>
 <p>总结：</p>
 <p>只开启aslr没开启pie的程序stack、libc等地址会被打乱，代码段等不变。</p>
 <p>只开启pie没开启aslr的程序基地址都不变，只有开启了aslr pie才会起作用。</p>
 <p>开启了aslr和pie的程序stack、lib、代码段、数据段等地址都被打乱。</p>
 <p>最后，现实中的Linux中大部分网络进程会开启pie，但其他大部分程序因为时性能问题(开启pie会导致额外的操作)并没有开启pie，开启pie和未开启pie的程序在几年前的比例可以参考下图：</p>
-<p><img src="D:/cach/image-20210603173125093.png" alt="image-20210603173125093"></p>
+<p><img src="/2021/06/05/Linux%E4%B8%8Baslr%E4%B8%8Epie/cach/image-20210603173125093.png" alt="image-20210603173125093"></p>
 
       
 

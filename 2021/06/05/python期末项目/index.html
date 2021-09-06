@@ -15,18 +15,18 @@
 <meta property="og:site_name" content="mkx7&#39;blog">
 <meta property="og:description" content="python期末项目学习记录">
 <meta property="og:locale">
-<meta property="og:image" content="http://example.com/cach/image-20210605220135261.png">
-<meta property="og:image" content="http://example.com/cach/image-20210605220716356.png">
-<meta property="og:image" content="http://example.com/cach/image-20210606121917658.png">
-<meta property="og:image" content="http://example.com/cach/image-20210606134343308.png">
-<meta property="og:image" content="http://example.com/cach/image-20210606135433423.png">
-<meta property="og:image" content="http://example.com/cach/image-20210606134630905.png">
+<meta property="og:image" content="http://example.com/2021/cach/image-20210605220135261.png">
+<meta property="og:image" content="http://example.com/2021/cach/image-20210605220716356.png">
+<meta property="og:image" content="http://example.com/2021/cach/image-20210606121917658.png">
+<meta property="og:image" content="http://example.com/2021/cach/image-20210606134343308.png">
+<meta property="og:image" content="http://example.com/2021/cach/image-20210606135433423.png">
+<meta property="og:image" content="http://example.com/2021/cach/image-20210606134630905.png">
 <meta property="article:published_time" content="2021-06-05T13:41:01.000Z">
 <meta property="article:modified_time" content="2021-06-07T11:06:16.899Z">
 <meta property="article:author" content="mkx7">
 <meta property="article:tag" content="python">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/cach/image-20210605220135261.png">
+<meta name="twitter:image" content="http://example.com/2021/cach/image-20210605220135261.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -86,10 +86,10 @@
         	    
 
 		<nav>
-    			总文章数 12
+    			总文章数 13
 		</nav>
 		<nav>
-			总字数 <span class="post-count">34.0k</span>
+			总字数 <span class="post-count">34.1k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -226,13 +226,13 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 允许远程访问</span><br><span class="line">dbms.connectors.default_listen_address=0.0.0.0</span><br><span class="line"># 开启bolt服务，默认端口7687</span><br><span class="line">dbms.connector.bolt.listen_address=:7687</span><br><span class="line"># 开启http服务，默认端口7474</span><br><span class="line">dbms.connector.http.listen_address=:7474</span><br><span class="line"># 开启https服务，默认端口7473</span><br><span class="line">dbms.connector.https.listen_address=:7473</span><br></pre></td></tr></table></figure>
 
 <p>然后进入bin文件，先chmod +x neo4j赋予neo4j运行权限，再输入./neo4j console运行neo4j：</p>
-<p><img src="../../../../cach/image-20210605220135261.png" alt="image-20210605220135261"></p>
+<p><img src="/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/../../../cach/image-20210605220135261.png" alt="image-20210605220135261"></p>
 <p>之后打开<a target="_blank" rel="noopener" href="http://localhost:7474/%E5%8E%BB%E9%85%8D%E7%BD%AEneo4j%EF%BC%8C%E5%88%9D%E5%A7%8B%E8%B4%A6%E6%88%B7%E5%90%8D%E5%92%8C%E5%AF%86%E7%A0%81%E9%83%BD%E6%98%AFneo4j%EF%BC%8C%E7%99%BB%E5%BD%95%E5%90%8E%E8%87%AA%E5%8A%A8%E4%BF%AE%E6%94%B9%EF%BC%8C%E4%BF%AE%E6%94%B9%E5%AF%86%E7%A0%81%E5%8A%A1%E5%BF%85%E8%AE%B0%E4%BD%8F%E5%90%8E%E9%9D%A2%E4%BC%9A%E7%94%A8%EF%BC%8C%E5%8F%A6%E5%A4%96%E6%9C%8D%E5%8A%A1%E5%85%88%E5%88%AB%E5%85%B3%E9%97%AD%E3%80%82">http://localhost:7474/去配置neo4j，初始账户名和密码都是neo4j，登录后自动修改，修改密码务必记住后面会用，另外服务先别关闭。</a></p>
 <h3 id="项目配置"><a href="#项目配置" class="headerlink" title="项目配置"></a>项目配置</h3><p>下载好项目后解压进入文件中，找到这个py脚本，将build_medicalgraph.py和answer_search.py中的self.g=Graph·······换成self.g = Graph(“<a href="http://localhost:7474&quot;">http://localhost:7474&quot;</a>, auth=(“你的neo4j账户名”,”你的密码”))，之后运行这个py脚本向neo4j内导入数据：</p>
-<p><img src="../../../../cach/image-20210605220716356.png" alt="image-20210605220716356"></p>
+<p><img src="/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/../../../cach/image-20210605220716356.png" alt="image-20210605220716356"></p>
 <p>ps：导入时间较长，大约几个小时</p>
 <p>完成后neo4j服务不要关闭，再运行chatbot_graph.py即可正常运行：</p>
-<p><img src="../../../../cach/image-20210606121917658.png" alt="image-20210606121917658"></p>
+<p><img src="/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/../../../cach/image-20210606121917658.png" alt="image-20210606121917658"></p>
 <h2 id="项目实现"><a href="#项目实现" class="headerlink" title="项目实现"></a>项目实现</h2><p>以上是直接使用刘老师写好的文件，之后分析下时该项目如何实现的。</p>
 <h3 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h3><p>本项目是一个以医学为中心的医药领域问答系统，主要包括两部分数据整理与问答系统，获取数据使用爬虫，储存数据使用Neo4j，数据操作采用neo4j的cypher查询语言，以结构化数据为主构建以医药为中心的医疗知识图谱，包含7类数量为4.4万的知识实体，11类数量为30万实体关系的知识图谱，问答系统基于规则匹配实现，根据知识图谱完成自动问答与分析服务。</p>
 <p>实现重点在于实现基于垂直网站数据的医药知识图谱构建和基于医药知识图谱的自动问答。</p>
@@ -384,9 +384,9 @@
 </tbody></table>
 <p>项目优点：采用规则匹配方式建立了完善的问题查询与回答机制，使用方便。</p>
 <p>项目缺点：数据不够详细，一些问题如疾病的引发、预防等回答结果用一大段文字描述不够精准，这点可通过引入事件抽取将原因结构化表示进行优化。</p>
-<h3 id="项目层次"><a href="#项目层次" class="headerlink" title="项目层次"></a>项目层次</h3><p><img src="../../../../cach/image-20210606134343308.png" alt="image-20210606134343308"></p>
-<p><img src="../../../../cach/image-20210606135433423.png" alt="image-20210606135433423"></p>
-<p><img src="../../../../cach/image-20210606134630905.png" alt="image-20210606134630905"></p>
+<h3 id="项目层次"><a href="#项目层次" class="headerlink" title="项目层次"></a>项目层次</h3><p><img src="/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/../../../cach/image-20210606134343308.png" alt="image-20210606134343308"></p>
+<p><img src="/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/../../../cach/image-20210606135433423.png" alt="image-20210606135433423"></p>
+<p><img src="/2021/06/05/python%E6%9C%9F%E6%9C%AB%E9%A1%B9%E7%9B%AE/../../../cach/image-20210606134630905.png" alt="image-20210606134630905"></p>
 <h3 id="项目目录"><a href="#项目目录" class="headerlink" title="项目目录"></a>项目目录</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">├── QASystemOnMedicalKG                #  项目名称</span><br><span class="line">    ├── answer_search.py               #  问题查询及返回查询结果</span><br><span class="line">    ├── build_medicalgraph.py          #  将结构化json数据导入neo4j数据库</span><br><span class="line">    ├── chatbot_graph.py               #  问答程序脚本</span><br><span class="line">    ├── QASystemOnMedicalKG/data       #  数据</span><br><span class="line">        ├── hepatopathy.json           #  肝病知识数据</span><br><span class="line">        ├── medical.json               #  全部知识数据</span><br><span class="line">    ├── QASystemOnMedicalKG/dict       #  关系</span><br><span class="line">        ├── check.txt                  #  诊断检查项目实体库</span><br><span class="line">        ├── deny.txt                   #  否定词库</span><br><span class="line">        ├── department.txt             #  医疗科目实体库</span><br><span class="line">        ├── disease.txt                #  疾病实体库</span><br><span class="line">        ├── drug.txt                   #  药品实体库</span><br><span class="line">        ├── food.txt                   #  食物实体库</span><br><span class="line">        ├── producer.txt               #  在售药品库</span><br><span class="line">        ├── symptom.txt                #  疾病症状实体库</span><br><span class="line">    ├── QASystemOnMedicalKG/prepare_data</span><br><span class="line">        ├── build_data.py              #  数据库操作脚本</span><br><span class="line">        ├── data_spider.py             #  数据采集脚本</span><br><span class="line">        ├── max_cut.py                 #  基于词典的最大前向/后向匹配</span><br><span class="line">    ├── question_classifier.py         #  问句类型分类脚本</span><br><span class="line">    ├── question_parser.py             #  问句解析脚本</span><br></pre></td></tr></table></figure>
 
 <h3 id="数据采集"><a href="#数据采集" class="headerlink" title="数据采集"></a>数据采集</h3><p>数据采集部分使用的data_spider.py爬虫脚本，爬取的<a target="_blank" rel="noopener" href="http://jib.xywy.com/%E7%BD%91%E7%AB%99%E4%B8%8A%E7%9A%84%E6%95%B0%E6%8D%AE%EF%BC%8C%E7%88%AC%E8%99%AB%E4%BD%BF%E7%94%A8%E7%9A%84urllib%E5%BA%93%EF%BC%8C%E7%88%AC%E5%8F%96%E7%9A%84%E6%95%B0%E6%8D%AE%E6%A0%B9%E6%8D%AE%E5%88%86%E7%B1%BB%E5%88%86%E4%B8%BA7%E7%A7%8D%E6%94%BE%E5%9C%A8MongoDB%E6%95%B0%E6%8D%AE%E5%BA%93%E4%B8%AD%EF%BC%8C%E5%85%B6%E4%B8%AD%E5%85%B3%E4%BA%8E%E5%B9%B6%E5%8F%91%E7%97%87%E9%83%A8%E5%88%86%E7%9A%84%E6%95%B0%E6%8D%AE%E4%BD%BF%E7%94%A8%E4%BA%86max_cut%E5%8C%B9%E9%85%8D%E8%84%9A%E6%9C%AC%E4%B8%AD%E7%9A%84%E5%8F%8C%E5%90%91%E6%9C%80%E5%A4%A7%E5%90%91%E5%89%8D%E5%8C%B9%E9%85%8Dmax_biward_cut%E3%80%82">http://jib.xywy.com/网站上的数据，爬虫使用的urllib库，爬取的数据根据分类分为7种放在MongoDB数据库中，其中关于并发症部分的数据使用了max_cut匹配脚本中的双向最大向前匹配max_biward_cut。</a></p>

